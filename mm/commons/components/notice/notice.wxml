@@ -1,0 +1,12 @@
+<view class="notice {{show?'show':''}}">
+    <view catchtouchmove="{{true}}" class="notice-overlay"></view>
+    <view catchtouchmove="{{true}}" class="notice-box" id="notice">
+        <view class="notice-head"></view>
+        <image class="notice-icon" src="../../icons/icon-notice.png"></image>
+        <view class="notice-title">单位公告</view>
+        <scroll-view scrollY class="notice-content">
+            <rich-text nodes="{{content}}" space="nbsp"></rich-text>
+        </scroll-view>
+        <view bindtap="close" class="notice-close">我已知晓</view>
+    </view>
+</view>

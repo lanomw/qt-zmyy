@@ -1,0 +1,37 @@
+<scroll-view scrollWithAnimation bindscroll="pagescroll" class="container {{!tmVisable}}" scrollIntoView="{{pagescrolltop}}" scrollY="{{!tmVisable}}">
+    <image bindtap="pagescrolltotop" class="scrolltop {{scrolltopVisible?'show':''}}" mode="widthFix" src="../../commons/icons/icon-scrolltop.png"></image>
+    <searchbar bindinput="onsearch" cityname="{{name}}" class="searchbar" id="scrolltop"></searchbar>
+    <swiper autoplay="{{true}}" class="home-swiper" style="height:{{bannerHeight[bannerActive]}}rpx">
+        <swiper-item wx:for="{{banners}}" wx:key="index">
+            <image bindload="bindBannerLoad" bindtap="jump" class="home-swiper-item" data-index="{{index}}" data-url="/packages/article/covid19/covid19?url={{item.url}}" mode="widthFix" src="{{item.imgurl}}"></image>
+        </swiper-item>
+    </swiper>
+    <view class="head-tip" wx:if="{{deceptiontipVisible}}">
+        <text class="head-top-text" decode="true">郑重提醒：请以平台内预约记录和接种门诊工作通知为准，请勿轻易相信任何电话或短信，谨防上当受骗！</text>
+    </view>
+    <view class="split-title">疫苗预约</view>
+    <product-swiper bindchange="productChange" bindtmchange="tmchange" cActive="{{cActive}}" cList="{{cList}}" class="product-swiper" id="home-product-swiper" pActive="{{pActive}}" pList="{{pList}}" tmVisable="{{tmVisable}}"></product-swiper>
+    <product-swiper bindchange="productChange" bindtmchange="tmchange" cActive="{{cActive}}" cList="{{cList}}" class="product-swiper sticky {{productSticky?'show':''}}" pActive="{{pActive}}" pList="{{pList}}" sticky="{{true}}" tmVisable="{{tmVisable}}"></product-swiper>
+    <view class="scroll-scell" wx:if="{{povlist.length>0}}">
+        <zf-card bindtap="jump" class="card-list" data-url="/packages/pov/pages/vaccinList/vaccinList?id={{item.id}}" descnd="{{item.addr}}" descndIcon="icondingwei" descst="{{item.tel}}" descstIcon="icondianhua2" pic="{{item.SmallPic=='https://app.zhifeishengwu.com/img/none.png'?'/commons/images/none.png':item.SmallPic}}" rangeIndex="{{index}}" rangeTotal="{{povlist.length}}" status="{{item.distance+'km'}}" title="{{item.cname}}" titleTag="{{item.isSubScribe}}" wx:if="{{!item.hide}}" wx:for="{{povlist}}" wx:key="index"></zf-card>
+        <view style="height: 200rpx;"></view>
+    </view>
+    <view class="empty" wx:if="{{povlist.length<1&&povlist!==''}}">
+        <image mode="widthFix" src="/commons/icons/icon-empty.png"></image>
+        <view>暂无数据</view>
+    </view>
+    <view class="empty empty-loading" wx:if="{{povlist===''&&reloadVisible==false&&positionFailed==false}}">
+        <image mode="widthFix" src="/commons/images/loading.gif"></image>
+    </view>
+    <view class="empty" wx:if="{{reloadVisible==true&&povlist===''&&positionFailed==false}}">
+        <image mode="widthFix" src="/commons/icons/icon-empty.png"></image>
+        <view>前方拥堵，请稍后再试</view>
+        <button bindtap="reload" class="reload">重新加载</button>
+    </view>
+    <view class="empty" wx:if="{{positionFailed==true&&povlist===''&&reloadVisible==false}}">
+        <image mode="widthFix" src="/commons/icons/icon-empty.png"></image>
+        <view>请确保【手机定位功能】已开启</view>
+        <button bindtap="reload" class="reload">重新授权</button>
+    </view>
+    <view style="width: 100%; height: 100rpx"></view>
+</scroll-view>

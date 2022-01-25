@@ -1,0 +1,60 @@
+.container {
+    padding: 32rpx 32rpx 200rpx;
+    overflow: hidden;
+}
+
+.container,.section {
+    box-sizing: border-box;
+}
+
+.section {
+    width: 100%;
+    padding: 30rpx 32rpx;
+    background-color: #fff;
+    border-radius: 8rpx;
+    color: #283036;
+    font-size: 28rpx;
+}
+
+.tip-content {
+    margin-top: 30rpx;
+}
+
+.section-title {
+    font-size: 32rpx;
+    color: #5292ff;
+    font-weight: 700;
+}
+
+.desire {
+    margin-top: 16rpx;
+}
+
+.desire-tip {
+    margin-top: 50rpx;
+    color: #283036;
+    font-size: 32rpx;
+    text-align: center;
+}
+
+.section-handle {
+    justify-content: center;
+}
+
+.section-btn {
+    width: 250rpx;
+    height: 76rpx;
+    margin-top: 60rpx;
+    margin-bottom: 40rpx;
+    line-height: 76rpx;
+    border-radius: 38rpx;
+    text-align: center;
+    background-color: #e8f1ff;
+    color: #5292ff;
+}
+
+.section-btn-apply {
+    margin-left: 44rpx;
+    color: #fff;
+    background-color: #5191ff;
+}

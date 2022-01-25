@@ -1,0 +1,8 @@
+{
+    "usingComponents": {
+        "zf-card": "/commons/components/store-card/store-card",
+        "product-swiper": "/commons/components/product-swiper/product-swiper",
+        "searchbar": "/commons/components/searchbar/searchbar"
+    },
+    "navigationBarTitleText": "首页"
+}

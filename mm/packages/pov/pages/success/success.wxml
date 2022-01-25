@@ -1,0 +1,10 @@
+<view class="container">
+    <image class="success-icon" mode="widthFix" src="../../images/yycg.png"></image>
+    <view class="success-label">预约成功</view>
+    <view class="success-tip">
+        <view class="success-tip-item">请您携带【本人身份证】</view>
+        <view class="success-tip-item">及时前往预约点进行接种</view>
+        <view class="success-tip-item">逾期视为自愿放弃</view>
+    </view>
+    <button bindtap="redirectTo" class="success-btn" data-url="/packages/mine/subscribeList/subscribeList">查看信息</button>
+</view>

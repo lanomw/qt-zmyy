@@ -1,0 +1,6 @@
+<view class="empty">
+    <view class="empty-icon">
+        <text class="iconfont iconwushuju" decode="true"></text>
+    </view>
+    <view class="empty-text">{{text}}</view>
+</view>

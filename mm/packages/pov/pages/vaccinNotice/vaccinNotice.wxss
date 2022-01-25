@@ -1,0 +1,56 @@
+.container {
+    padding: 16rpx 32rpx 100rpx;
+}
+
+.container,.notice-box {
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.notice-box {
+    width: 100%;
+    padding: 40rpx 30rpx;
+    background-color: #fff;
+    border-radius: 16rpx;
+}
+
+.notice-title {
+    position: relative;
+    z-index: 100;
+}
+
+.notice-title::after,.notice-title::before {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    overflow: hidden;
+    content: "";
+    z-index: 1;
+}
+
+.notice-title::before {
+    width: 100%;
+    left: 0;
+    font-size: 34rpx;
+    font-weight: 700;
+    text-align: center;
+    content: "温馨提示";
+    z-index: 2;
+}
+
+.notice-title::after {
+    width: 136rpx;
+    height: 20rpx;
+    top: 30rpx;
+    border-radius: 20rpx;
+    margin-left: -70rpx;
+    background-color: #c0d7ff;
+    opacity: .21;
+}
+
+.notice-content {
+    margin-top: 80rpx;
+    text-indent: 2em;
+    font-size: 28rpx;
+    line-height: 60rpx;
+}

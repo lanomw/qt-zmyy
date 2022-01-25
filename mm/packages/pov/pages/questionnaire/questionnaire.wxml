@@ -1,0 +1,21 @@
+<view class="container">
+    <image class="bg" mode="widthFix" src="../../images/bg-questionnaire@750x620.jpg"></image>
+    <view class="q-box">
+        <view class="qb-title">{{qInfo.title}}</view>
+        <view class="qb-desc">{{qInfo.subtitle}}</view>
+        <view class="qb-inner" wx:for="{{qInfo.list}}" wx:key="index">
+            <view class="qb-inner-label">{{item.QuestionTitle}}</view>
+            <view class="qb-inner-content" wx:if="{{item.Ftype=='option'}}">
+                <view bindtap="bindRadio" class="qb-content-btn  {{qForm[index].val==1?'qb-content-btn-act':''}}" data-id="{{item.id}}" data-index="{{index}}" data-mxid="{{item.mxid}}" data-value="{{1}}">有</view>
+                <view bindtap="bindRadio" class="qb-content-btn  {{qForm[index].val==1?'':'qb-content-btn-act'}}" data-id="{{item.id}}" data-index="{{index}}" data-mxid="{{item.mxid}}" data-value="{{0}}">无</view>
+            </view>
+            <view class="qb-inner-content" wx:if="{{item.Ftype=='date'}}">
+                <picker bindchange="bindHistoryChange" data-id="{{item.id}}" data-index="{{index}}" data-mxid="{{item.mxid}}" mode="date" value="{{qForm[index].val}}">
+                    <view class="qb-inner-content-text">{{qForm[index].val?qForm[index].val:'选择时间'}} <text class="iconfont iconxiayibu2"></text>
+                    </view>
+                </picker>
+            </view>
+        </view>
+        <button bindtap="bindSubmit" class="qb-submit">去预约</button>
+    </view>
+</view>

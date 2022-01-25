@@ -1,0 +1,89 @@
+<view class="container" wx:if="{{userInfo!==''&&reloadVisible==false}}">
+    <view class="head-tip" wx:if="{{headtipVisible}}">
+        <text class="head-top-text" decode="true">温馨提示：您提交后可以去&lt;我的预约&gt;查看是否预约成功</text>
+        <text bindtap="closeHeadtip" class="iconfont iconclose head-top-icon" decode="true"></text>
+    </view>
+    <view class="cell" style="margin-top: 0">
+        <view class="cell-title list zf-inner">
+            <view class="cell-title-label">个人信息</view>
+            <view bindtap="jump" class="cell-title-icon" data-url="/packages/mine/profile/profile?idcardNsy={{idcardNsy}}">
+                <text class="cell-title-icon">修改</text>
+            </view>
+        </view>
+        <view class="list">
+            <view class="list-label">姓名</view>
+            <view class="list-title">{{userInfo.cname}}</view>
+            <view class="list-desc"></view>
+        </view>
+        <view class="list" wx:if="{{idcardNsy=='true'}}">
+            <view class="list-label">证件号码</view>
+            <view class="list-title">{{userInfo.idcard}}</view>
+            <view class="list-desc"></view>
+        </view>
+        <view class="list" wx:if="{{idcardNsy=='false'}}">
+            <view class="list-label">生日</view>
+            <view class="list-title">{{userInfo.birthday}}</view>
+            <view class="list-desc"></view>
+        </view>
+        <view class="list">
+            <view class="list-label">手机号码</view>
+            <view class="list-title">{{userInfo.tel}}</view>
+            <view class="list-desc"></view>
+        </view>
+        <view class="list">
+            <view class="list-label">性别</view>
+            <view class="list-title">{{userInfo.sex?userInfo.sex==1?'男':'女':''}}</view>
+            <view class="list-desc"></view>
+        </view>
+    </view>
+    <view class="cell">
+        <view class="cell-title list zf-inner">
+            <view class="cell-title-label">预约信息</view>
+            <view class="cell-title-icon">
+                <text class="iconfont " decode="true"></text>
+            </view>
+        </view>
+        <view class="list">
+            <view class="list-label">预约地点</view>
+            <view class="list-title">{{subscribeInfo.customerName}}</view>
+            <view class="list-desc"></view>
+        </view>
+        <view class="list">
+            <view class="list-label">预约时间</view>
+            <view class="list-title">{{subscribeInfo.subscribeTime}}<text decode="true">&nbsp;</text>{{subscribeInfo.stime}}-{{subscribeInfo.etime}}</view>
+            <view class="list-desc"></view>
+        </view>
+        <view class="list">
+            <view class="list-label">预约项目</view>
+            <view class="list-title">{{subscribeInfo.pname}}</view>
+            <view class="list-desc"></view>
+        </view>
+        <view class="list list-nopdbottom">
+            <view class="list-label">选择针次</view>
+            <view class="list-title list-btns">
+                <button bindtap="chooseTimes" class="list-btn {{times==item.value?'list-btn-active':''}}" data-times="{{item.value}}" wx:for="{{subscribeInfo.NumbersVaccine}}" wx:key="index">{{item.cname}}</button>
+            </view>
+        </view>
+    </view>
+    <view class="protocol">
+    保存个人信息即表示同意<text bindtap="jump" class="protocol-detail" data-url="/packages/mine/protocol/protocol" decode="true">&nbsp;知苗易约用户服务协议</text>
+    </view>
+    <button bindtap="submit" class="subscribe">确定预约</button>
+    <view style="height: 100rpx;"></view>
+</view>
+<view class="task-loading" wx:if="{{isTask}}">
+    <view class="task-loading-content">
+        <image class="task-loading-gif" mode="widthFix" src="/commons/images/loading.gif"></image>
+        <view class="task-loading-tip">正在排队，请稍候...</view>
+    </view>
+</view>
+<view class="empty" wx:if="{{reloadVisible==true}}">
+    <image mode="widthFix" src="/commons/icons/icon-empty.png"></image>
+    <view>前方拥堵，请稍后再试</view>
+    <button bindtap="setUserinfo" class="reload">重新加载</button>
+</view>
+<view bindreflush="reflushMovCaptcha" class="empty empty-loading" wx:if="{{userInfo===''&&reloadVisible==false}}">
+    <image mode="widthFix" src="/commons/images/loading.gif"></image>
+</view>
+<movable-verify bindreflush="reflushMovCaptcha" bindresult="bindMovableResult" bindvisible="bindMovableShow" captcha="{{moveCaptcha}}" show="{{captchaVisible}}" wx:if="{{moveCaptcha.msg!='ROTATE'}}"></movable-verify>
+<rotation-verify bindreflush="reflushMovCaptcha" bindresult="bindMovableResult" bindvisible="bindMovableShow" captcha="{{moveCaptcha}}" show="{{captchaVisible}}" wx:if="{{moveCaptcha.msg=='ROTATE'}}"></rotation-verify>

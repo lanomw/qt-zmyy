@@ -1,0 +1,23 @@
+<view class="overly {{show?'show':''}}"></view>
+<view class="movable-verify {{show?'show':''}}">
+    <view class="head">
+        <view class="title">
+            <text>请拖动左侧滑块完成拼图</text>
+            <text bindtap="reflush" class="iconfont iconrefresh"></text>
+        </view>
+        <view bindtap="close" class="iconfont iconclose"></view>
+    </view>
+    <view class="content" id="content">
+        <image class="content-bg" mode="widthFix" src="data:image/png;base64,{{captcha.dragon}}"></image>
+        <view class="content-item" style="left:{{bx}}px">
+            <image class="content-item-bg" mode="widthFix" src="data:image/png;base64,{{captcha.tiger}}"></image>
+        </view>
+        <view class="result {{loadingTip?'show':''}} {{resultTipClass}}">
+            <view class="result-tip ">{{loadingTip}}</view>
+        </view>
+    </view>
+    <movable-area class="movbar" wx:if="{{resultTipClass==''}}">
+        <movable-view animation="{{false}}" bindchange="bindchange" bindtouchend="bindtouchend" class="movbar-item" direction="{{direction}}" x="{{mx}}">| | |</movable-view>
+    </movable-area>
+    <view bindtap="reflush" class="result-error" wx:if="{{resultTipClass=='error'}}">重新拼图</view>
+</view>

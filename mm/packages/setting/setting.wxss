@@ -1,0 +1,33 @@
+.cell {
+    margin-top: 16rpx;
+    width: 100%;
+    padding: 0 20rpx;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 88rpx;
+    line-height: 88rpx;
+    background-color: #fff;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.cell-title {
+    width: 220rpx;
+    color: #283036;
+    font-size: 28rpx;
+    font-weight: 700;
+}
+
+.cell-content {
+    flex: 1;
+    font-size: 26rpx;
+    color: #919aa1;
+    text-align: right;
+    margin-right: 20rpx;
+}
+
+.cell-arrow {
+    color: #cdd5dc;
+    font-size: 26rpx;
+}

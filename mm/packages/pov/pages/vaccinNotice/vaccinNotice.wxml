@@ -1,0 +1,6 @@
+<view class="container">
+    <view class="notice-box">
+        <view class="notice-title"></view>
+        <view class="notice-content">{{notice}}</view>
+    </view>
+</view>

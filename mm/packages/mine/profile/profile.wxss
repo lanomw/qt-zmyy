@@ -1,0 +1,108 @@
+.mg60 {
+    margin-top: 60rpx;
+}
+
+.cell {
+    width: 100%;
+    border-top: 1px solid #ededed;
+    border-bottom: 1px solid #ededed;
+    background-color: #fff;
+}
+
+.list {
+    width: calc(100% - 60rpx);
+    height: 88rpx;
+    line-height: 88rpx;
+    font-size: 28rpx;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee;
+}
+
+.list:last-child {
+    border: none;
+}
+
+.list-label {
+    width: 200rpx;
+    color: #666;
+}
+
+.list-title-input {
+    flex: 1;
+}
+
+.list-title-input input {
+    width: 100%;
+    height: 88rpx;
+    line-height: 88rpx;
+    color: #333;
+}
+
+.list-title-input-placeholder {
+    color: #b5bac4;
+}
+
+.list-desc {
+    width: 40rpx;
+    font-size: 26rpx;
+    color: #a4a4a4;
+}
+
+.list-desc-bt {
+    width: 120rpx;
+}
+
+.list-desc-bt button {
+    width: 100%;
+    height: 49rpx;
+    line-height: 49rpx;
+    margin-top: 19rpx;
+    font-size: 20rpx;
+    border-radius: 60rpx;
+}
+
+.list-desc-bt button,.save {
+    color: #fff;
+    background-color: #5192ff;
+    box-shadow: 4rpx 6rpx 26rpx 4rpx rgba(15,76,179,.21);
+}
+
+.save {
+    width: 80%;
+    height: 87rpx;
+    margin-top: 88rpx;
+    border-radius: 40rpx;
+    font-size: 36rpx;
+    font-weight: 400;
+    font-stretch: normal;
+    letter-spacing: 7rpx;
+}
+
+.nsy {
+    color: red;
+}
+
+.protocol {
+    margin-top: 88rpx;
+    font-size: 28rpx;
+    text-align: center;
+    color: #999;
+    letter-spacing: 4rpx;
+}
+
+.protocol-detail {
+    color: #5192ff;
+    position: relative;
+}
+
+.protocol-detail:after {
+    height: 2rpx;
+    width: 100%;
+    position: absolute;
+    right: 0;
+    bottom: -10rpx;
+    content: "";
+    background-color: #5192ff;
+}

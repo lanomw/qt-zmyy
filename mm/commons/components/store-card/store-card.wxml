@@ -1,0 +1,22 @@
+<view class="store-card zf-inner">
+    <view class="store-face">
+        <image binderror="loaderror" class="store-face-pic" mode="widthFix" src="{{!iserror?pic:'/commons/images/none.png'}}"></image>
+    </view>
+    <view class="store-content">
+        <view class="store-title zf-inner">
+            <text class="store-title-status" wx:if="{{titleTag}}">可预约</text>
+            <text class="store-title-text">{{title}}</text>
+        </view>
+        <view class="store-tel store-cell">
+            <text class="iconfont {{descstIcon}}" decode="true"></text>
+            <text class="store-tel-text">{{descst||'暂无数据'}}</text>
+        </view>
+        <view class="store-geo store-cell zf-inner">
+            <view class="store-geo-content">
+                <text class="iconfont {{descndIcon}}" decode="true"></text>
+                <text class="store-tel-text">{{descnd||'暂无数据'}}</text>
+            </view>
+            <view class="store-distance">{{status||'999LY'}}</view>
+        </view>
+    </view>
+</view>

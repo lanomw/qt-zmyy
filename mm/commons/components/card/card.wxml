@@ -1,0 +1,31 @@
+<view class="card">
+    <view class="card-inner mg20">
+        <view class="card-l">
+            <image class="card-l-pic" mode="widthFix" src="{{pic}}"></image>
+        </view>
+        <view class="card-r">
+            <view class="card-inner">
+                <view class="card-r-title">
+                    <image class="card-r-title-tag" mode="widthFix" src="/commons/images/icon-card-status.png" wx:if="{{titleTag}}"></image>
+                    <text class="iconfont card-r-title-icon {{titleIcon}}" decode="true"></text>
+                    <text class="card-r-title-text" style="{{titleTag?'margin-left: 60rpx;':''}}">{{title}}</text>
+                </view>
+                <view class="card-status">{{status}}</view>
+            </view>
+            <view class="card-r-descst">
+                <text class="iconfont card-r-title-icon {{descstIcon}}" decode="true"></text>
+                <text class="card-r-title-text">{{descst}}</text>
+            </view>
+            <view class="card-r-descnd" style="{{rangeTotal-1==rangeIndex?'border:none':''}}">
+                <text class="iconfont card-r-title-icon {{descndIcon}}" decode="true"></text>
+                <text class="card-r-title-text">{{descnd}}</text>
+            </view>
+        </view>
+    </view>
+    <view class="card-tip">
+        <rich-text bindtap="tap" nodes="{{tip}}"></rich-text>
+    </view>
+    <view class="card-btns card-inner">
+        <view bindtap="onclick" class="{{item.class}}" data-id="{{item.id}}" data-key="{{index}}" data-label="{{item.label}}" wx:for="{{bt}}" wx:key="index">{{item.label}}</view>
+    </view>
+</view>

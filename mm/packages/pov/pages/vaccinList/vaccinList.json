@@ -1,0 +1,6 @@
+{
+    "usingComponents": {
+        "zf-notice": "/commons/components/notice/notice"
+    },
+    "enablePullDownRefresh": true
+}

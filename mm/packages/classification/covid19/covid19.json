@@ -1,0 +1,7 @@
+{
+    "usingComponents": {
+        "zf-card": "/commons/components/store-card/store-card",
+        "searchbar": "/commons/components/searchbar/searchbar"
+    },
+    "navigationBarTitleText": "新冠疫苗预约"
+}

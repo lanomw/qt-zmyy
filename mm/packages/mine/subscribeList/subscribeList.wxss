@@ -1,0 +1,22 @@
+.card-list {
+    width: calc(100% - 30rpx);
+    margin: 16rpx auto 0;
+    box-sizing: border-box;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.mg20 {
+    margin-top: 20rpx;
+}
+
+.empty {
+    width: 100%;
+    text-align: center;
+    margin: 20vh auto 0;
+    font-size: 24rpx;
+}
+
+.empty image {
+    width: 300rpx;
+}

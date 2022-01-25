@@ -1,0 +1,7 @@
+{
+    "usingComponents": {
+        "rotation-verify": "/commons/components/rotation-verify/rotation-verify",
+        "movable-verify": "/commons/components/movable-verify/movable-verify"
+    },
+    "navigationBarTitleText": "填写预约信息"
+}

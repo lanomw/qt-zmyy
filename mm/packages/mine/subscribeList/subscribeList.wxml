@@ -1,0 +1,7 @@
+<view class="container">
+    <zf-card bindclick="onclick" bt="{{item.btns}}" class="card-list" descnd="{{item.product}}" descndIcon="iconceng" descst="{{item.VaccineDate}}" descstIcon="iconnaozhong" pic="/commons/images/none.png" status="{{item.status}}" tip="{{item.tip}}" title="{{item.cname}}" wx:if="{{list.length>0}}" wx:for="{{list}}" wx:key="index"></zf-card>
+    <view class="empty" wx:if="{{list.length<1}}">
+        <image mode="widthFix" src="/commons/icons/icon-empty.png"></image>
+        <view>暂无数据</view>
+    </view>
+</view>

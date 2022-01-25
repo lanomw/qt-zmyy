@@ -1,0 +1,32 @@
+var e = "https://cloud.cn2030.com/sc";
+
+module.exports = {
+    auth: e + "/wx/HandlerSubscribe.ashx?act=auth",
+    user: e + "/wx/HandlerSubscribe.ashx?act=User",
+    getBanner: e + "/wx/HandlerCov19.ashx?act=GetBanner",
+    customerList: e + "/wx/HandlerSubscribe.ashx?act=CustomerList",
+    getVaccines: e + "/wx/HandlerSubscribe.ashx?act=GetCat1",
+    getVaccineCates: e + "/wx/HandlerSubscribe.ashx?act=GetCat2&id=",
+    getPovDetail: e + "/wx/HandlerSubscribe.ashx?act=GetPovDetail&id=",
+    userSubcribeList: e + "/wx/HandlerSubscribe.ashx?act=UserSubcribeList",
+    putUser: e + "/wx/HandlerSubscribe.ashx?act=Reg",
+    getCDCDetail: e + "/wx/HandlerSubscribe.ashx?act=CustomerProduct",
+    getSubscribeMonth: e + "/wx/HandlerSubscribe.ashx?act=GetCustSubscribeDate",
+    getSubscribeMonth_news: e + "/wx/HandlerSubscribe.ashx?act=GetCustSubscribeDateAll",
+    getSubscribeTime: e + "/wx/HandlerSubscribe.ashx?act=GetCustSubscribeDateDetail",
+    submitScribe: e + "/wx/HandlerSubscribe.ashx?act=Save20",
+    submitScribe30: e + "/api/User/OrderPost",
+    getOrderStatus: e + "/wx/HandlerSubscribe.ashx?act=GetOrderStatus",
+    cancelScribe: e + "/wx/HandlerSubscribe.ashx?act=cannel",
+    getSubcribeDetail: e + "/wx/HandlerSubscribe.ashx?act=UserSubcribeDetail",
+    getQuestionnaire: e + "/wx/HandlerSubscribe.ashx?act=GetQuestion",
+    setQuestionnaire: e + "/wx/HandlerSubscribe.ashx?act=SetQuestion",
+    comfirmVaccin: e + "/wx/HandlerSubscribe.ashx?act=setFinished&id=",
+    getCertType: e + "/wx/HandlerSubscribe.ashx?act=GetDocType",
+    getMovCaptcha: e + "/wx/HandlerSubscribe.ashx?act=GetCaptcha",
+    putMovCaptcha: e + "/wx/HandlerSubscribe.ashx?act=CaptchaVerify",
+    setUserCancel: e + "/wx/HandlerSubscribe.ashx?act=SetUserCancel",
+    customerCov19List: e + "/wx/HandlerCov19.ashx?act=CustomerCov19List",
+    GetCov19Question: e + "/wx/HandlerCov19.ashx?act=GetCov19Question",
+    SetCov19Question: e + "/wx/HandlerCov19.ashx?act=SetCov19Question"
+};

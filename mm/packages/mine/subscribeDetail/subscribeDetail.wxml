@@ -1,0 +1,61 @@
+<view class="container">
+    <view class="cell">
+        <view class="cell-title">
+            <view class="cell-title-label">个人信息</view>
+        </view>
+        <view class="list">
+            <view class="list-label">姓名</view>
+            <view class="list-title">{{detail.username}}</view>
+        </view>
+        <view class="list" wx:if="{{detail.doctype}}">
+            <view class="list-label">证件类型</view>
+            <view class="list-title">{{detail.doctype}}</view>
+        </view>
+        <view class="list" wx:if="{{detail.idcard}}">
+            <view class="list-label">证件号码</view>
+            <view class="list-title">{{detail.idcard}}</view>
+        </view>
+        <view class="list">
+            <view class="list-label">手机号</view>
+            <view class="list-title">{{detail.tel}}</view>
+        </view>
+        <view class="list">
+            <view class="list-label">性别</view>
+            <view class="list-title">{{detail.sex?detail.sex==1?'男':'女':''}}</view>
+        </view>
+    </view>
+    <view class="cell">
+        <view class="cell-title">
+            <view class="cell-title-label">预约信息</view>
+        </view>
+        <view class="list">
+            <view class="list-label">预约状态</view>
+            <view class="list-title">{{detail.isFinished?'已接种':detail.isCancel?'已取消':'已预约'}}</view>
+        </view>
+        <view class="list">
+            <view class="list-label">预约编号</view>
+            <view class="list-title">{{detail.Fnumber}}</view>
+        </view>
+        <view class="list">
+            <view class="list-label">预约地点</view>
+            <view class="list-title">{{detail.cname}}</view>
+        </view>
+        <view class="list">
+            <view class="list-label">申请时间</view>
+            <view class="list-title">{{detail.cdate}}</view>
+        </view>
+        <view class="list">
+            <view class="list-label">接种时间</view>
+            <view class="list-title">{{detail.VaccineDate}}</view>
+        </view>
+        <view class="list">
+            <view class="list-label">预约项目</view>
+            <view class="list-title">{{detail.product}}</view>
+        </view>
+        <view class="list">
+            <view class="list-label">预约针次</view>
+            <view class="list-title">第{{detail.FTime}}针</view>
+        </view>
+    </view>
+    <view style="height: 100rpx;"></view>
+</view>

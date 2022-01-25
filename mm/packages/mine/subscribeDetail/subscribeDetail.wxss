@@ -1,0 +1,80 @@
+.cell {
+    margin-top: 16rpx;
+    padding: 0 32rpx;
+    box-sizing: border-box;
+    border-top: 1px solid #ededed;
+    border-bottom: 1px solid #ededed;
+    background-color: #fff;
+}
+
+.cell,.cell-title {
+    width: 100%;
+}
+
+.cell-title-label {
+    position: relative;
+    height: 88rpx;
+    line-height: 88rpx;
+    font-size: 30rpx;
+    font-weight: 700;
+    border-bottom: 1px solid #eee;
+}
+
+.cell-title-icon {
+    width: 30rpx;
+    font-size: 30rpx;
+    color: #5192ff;
+}
+
+.list {
+    padding: 20rpx 0;
+    font-size: 28rpx;
+    margin: 0 auto;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee;
+}
+
+.list:last-child {
+    border: none;
+}
+
+.list-label {
+    width: 200rpx;
+    color: #5b656d;
+}
+
+.list-title {
+    flex: 1;
+    color: #283036;
+}
+
+.list-title-input-placeholder {
+    color: #b5bac4;
+}
+
+.list-desc {
+    width: 40rpx;
+    font-size: 26rpx;
+    color: #a4a4a4;
+}
+
+.list-btn {
+    width: 140rpx;
+    height: 50rpx;
+    margin-top: 20rpx;
+    line-height: 50rpx;
+    font-size: 26rpx;
+    border-radius: 140rpx;
+    color: #5192ff;
+    border: 1px solid #5192ff;
+    background-color: #fff;
+}
+
+.list-btn-active {
+    color: #fff;
+    border: 0;
+    background-color: #5192ff;
+    box-shadow: 4rpx 6rpx 18rpx 0 rgba(15,76,179,.21);
+}

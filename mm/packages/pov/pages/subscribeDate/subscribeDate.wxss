@@ -1,0 +1,239 @@
+.calendar-scroll {
+    margin-top: 5rpx;
+    height: 100vh;
+}
+
+.container {
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    color: #393a50;
+}
+
+.container,.zf-inner {
+    display: flex;
+    justify-content: space-between;
+}
+
+.zf-hearder {
+    width: 100%;
+    overflow: hidden;
+    padding-left: 60rpx;
+}
+
+.zf-header-h5 {
+    height: 60rpx;
+    line-height: 60rpx;
+    font-size: 24rpx;
+    color: #222;
+}
+
+.mgt20 {
+    margin-top: 20rpx;
+}
+
+.mgt24 {
+    margin-top: 24rpx;
+}
+
+.calendar {
+    width: 100%;
+}
+
+.calendar-header {
+    background-color: #fff;
+}
+
+.calendar-content-title {
+    margin: 0 0 20rpx;
+    font-size: 32rpx;
+    text-align: center;
+    color: #000;
+}
+
+.calendar-inner {
+    display: flex;
+    justify-content: space-between;
+}
+
+.calendar-title {
+    line-height: 80rpx;
+    font-size: 26rpx;
+    color: #333;
+}
+
+.calendar-title-item {
+    flex: 1;
+    text-align: center;
+}
+
+.calendar-content {
+    padding: 20rpx;
+    font-size: 24rpx;
+    box-sizing: border-box;
+    background-color: #fff;
+    margin-top: 24rpx;
+}
+
+.calendar-content-tip {
+    margin: 30rpx 0 60rpx;
+    font-size: 24rpx;
+    text-align: center;
+    color: #999;
+}
+
+.calendar-content:first-child {
+    margin-top: 0;
+}
+
+.calendar-content-item {
+    position: relative;
+    width: 80rpx;
+    height: 80rpx;
+    font-size: 28rpx;
+    line-height: 50rpx;
+    text-align: center;
+    border-radius: 100%;
+    margin-top: 30rpx;
+}
+
+.calendar-content-item-active {
+    color: #fff;
+    background-color: #5192ff;
+    box-shadow: 4rpx 6rpx 18rpx 0 rgba(15,76,179,.21);
+}
+
+.calendar-content-item-desc,.calendar-content-item-desc-full {
+    display: block;
+    position: absolute;
+    width: 100%;
+    bottom: 0rpx;
+    left: 0;
+    font-size: 18rpx;
+    font-weight: 400;
+    color: #5192ff;
+}
+
+.calendar-content-item-desc-full {
+    color: #666;
+}
+
+.calendar-content-item-active .calendar-content-item-desc,.calendar-content-item-active .calendar-content-item-desc-full {
+    color: #fff;
+}
+
+.calendar-content-disable {
+    color: #999;
+}
+
+.calendar-time {
+    width: 100%;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    color: #333;
+    background-color: #fff;
+    transition: all .5s linear;
+    box-shadow: 0 0 10rpx rgba(0,0,0,.3);
+    z-index: 1;
+}
+
+.calendar-time-scroll {
+    max-height: 80vh;
+}
+
+.calendar-time-title {
+    line-height: 80rpx;
+    font-size: 30rpx;
+    background-color: #eff5ff;
+    box-sizing: border-box;
+    padding: 0 32rpx;
+}
+
+.calendar-time-titlel {
+    width: 400rpx;
+}
+
+.calendar-time-titler {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #666;
+    font-size: 36rpx;
+    text-align: right;
+}
+
+.calendar-time-list {
+    font-size: 28rpx;
+    box-sizing: border-box;
+    position: relative;
+    padding: 0 32rpx 20rpx;
+    margin-top: 20rpx;
+}
+
+.calendar-time-list::after {
+    position: absolute;
+    bottom: 0;
+    left: 32rpx;
+    content: "";
+    background-color: #f1f1f1;
+    width: calc(100% - 64rpx);
+    height: 1px;
+}
+
+.calendar-time-list:last-child::after {
+    height: 0;
+}
+
+.calendar-time-list .label {
+    justify-content: left;
+}
+
+.calendar-time-list .label .label-text {
+    height: 100rpx;
+    line-height: 100rpx;
+}
+
+.calendar-time-list .btn {
+    display: block;
+    width: 150rpx;
+    height: 60rpx;
+    line-height: 60rpx;
+    margin: 20rpx 0 0;
+    font-size: 30rpx;
+    background-color: #5192ff;
+    color: #fff;
+    border-radius: 30rpx;
+}
+
+.calendar-time-list .bt-disable {
+    background-color: #c5c9d0;
+}
+
+.calendar-time-list .tip {
+    color: #fc6d1f;
+    font-size: 30rpx;
+}
+
+.fs-24 {
+    font-size: 24rpx;
+}
+
+.calendar-loading {
+    width: 100%;
+    height: 300rpx;
+    line-height: 500rpx;
+    overflow: hidden;
+    text-align: center;
+}
+
+.calendar-loading image {
+    width: 300rpx;
+}
+
+.empty {
+    margin-top: 20vh;
+}

@@ -1,0 +1,41 @@
+page {
+    background-color: #fff;
+}
+
+.success-icon {
+    width: 140rpx;
+    height: auto;
+    margin: 200rpx auto 0;
+}
+
+.success-label {
+    font-size: 36rpx;
+    margin-top: 16rpx;
+    color: #666;
+    letter-spacing: .2em;
+}
+
+.success-tip {
+    width: 448rpx;
+    margin-top: 50rpx;
+    font-size: 26rpx;
+    text-align: center;
+    line-height: 40rpx;
+    color: #5192ff;
+}
+
+.success-tip-item {
+    width: 100%;
+}
+
+.success-btn {
+    width: 448rpx;
+    height: 80rpx;
+    line-height: 80rpx;
+    border-radius: 40rpx;
+    margin-top: 90rpx;
+    font-size: 36rpx;
+    color: #fff;
+    background-color: #5192ff;
+    box-shadow: 4px 6px 26px 4px rgba(15,76,179,.21);
+}

@@ -1,0 +1,18 @@
+<view class="container">
+    <view class="tip section">
+        <view class="section-title">{{tip.title}}</view>
+        <view class="tip-content">
+            <text decode="true">{{tip.subtitle}}</text>
+        </view>
+    </view>
+    <view class="desire section">
+        <view class="section-title">接种意愿调查</view>
+        <view class="desire-tip">{{tip.list[0].QuestionTitle}}</view>
+        <view class="section-handle zf-inner">
+            <picker bindchange="bindRefuse" headerText="{{refuseTitle}}" range="{{refuseReson}}" rangeKey="text">
+                <view bindtap="refuse" class="section-btn section-btn-refuse" data-Foptions="{{1}}">{{tip.list[0].Foptions[1].text}}</view>
+            </picker>
+            <view bindtap="apply" class="section-btn section-btn-apply" data-Foptions="{{0}}">{{tip.list[0].Foptions[0].text}}</view>
+        </view>
+    </view>
+</view>

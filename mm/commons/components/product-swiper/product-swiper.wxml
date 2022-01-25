@@ -1,0 +1,28 @@
+<view class="tm {{tmVisable?'show':''}}" wx:if="{{!sticky}}">
+    <view bindtap="handleTm" class="tm-cover" data-modal="false"></view>
+    <view class="tm-gird zf-inner">
+        <view bindtap="chooseTi" class="tm-i" data-id="{{item.id}}" data-index="{{index}}" wx:for="{{pList}}" wx:key="index">
+            <view class="tm-il">{{item.cname}}</view>
+        </view>
+        <view style="width: 100%;height: 80rpx;"></view>
+    </view>
+</view>
+<view class="product-swiper {{sticky?'product-swiper-sticky':''}}">
+    <view class="types zf-inner">
+        <scroll-view scrollWithAnimation scrollX class="scroll-tab" enableFlex="true" scrollIntoView="{{'a_'+(pActive-1<0?0:pActive-1)}}">
+            <view class="zf-inner">
+                <view bindtap="changeProjectActive" class="scroll-tab-item {{pActive==index?'scroll-tab-active':''}}" data-id="{{item.id}}" data-index="{{index}}" id="{{'a_'+index}}" wx:for="{{pList}}" wx:key="index">{{item.cname}}</view>
+            </view>
+        </scroll-view>
+        <view bindtap="handleTm" class="types-menu" data-modal="true">
+            <text class="iconfont icongengduo1"></text>
+        </view>
+    </view>
+    <scroll-view scrollX class="scroll-tab-content" enableFlex="true" wx:if="{{cList.length>0}}">
+        <view class="zf-inner">
+            <view bindtap="changeTypeActive" class="scroll-tab-item {{cActive==index?'scroll-tab-active':''}}" data-index="{{index}}" data-product="{{item.id}}" wx:for="{{cList}}" wx:key="index">
+                <view class="scroll-tab-item-label">{{item.alias}}</view>
+            </view>
+        </view>
+    </scroll-view>
+</view>

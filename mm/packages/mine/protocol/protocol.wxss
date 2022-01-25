@@ -1,0 +1,27 @@
+page {
+    box-sizing: border-box;
+    background-color: #fff;
+    padding: 40rpx;
+    color: #333;
+    text-indent: 2em;
+}
+
+.h1 {
+    font-size: 36rpx;
+    text-align: center;
+    margin-bottom: 40rpx;
+    font-weight: 800;
+}
+
+.h2 {
+    font-size: 32rpx;
+    font-weight: 700;
+    margin-top: 30rpx;
+}
+
+.p {
+    margin-top: 20rpx;
+    font-size: 28rpx;
+    color: #666;
+    line-height: 40rpx;
+}

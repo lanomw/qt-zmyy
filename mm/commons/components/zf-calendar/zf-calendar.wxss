@@ -1,0 +1,126 @@
+.container {
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    color: #393a50;
+}
+
+.container,.zf-inner {
+    display: flex;
+    justify-content: space-between;
+}
+
+.zf-hearder {
+    width: 100%;
+    overflow: hidden;
+    padding-left: 60rpx;
+}
+
+.zf-header-h5 {
+    height: 60rpx;
+    line-height: 60rpx;
+    font-size: 24rpx;
+    color: #222;
+}
+
+.mgt20 {
+    margin-top: 20rpx;
+}
+
+.mgt24 {
+    margin-top: 24rpx;
+}
+
+.calendar {
+    width: 100%;
+    position: relative;
+}
+
+.calendar-header {
+    background-color: #fff;
+}
+
+.calendar-inner {
+    display: flex;
+    justify-content: space-between;
+}
+
+.calendar-header-l,.calendar-header-r,.calendar-header-t {
+    height: 100rpx;
+    line-height: 100rpx;
+}
+
+.calendar-header-l,.calendar-header-r {
+    width: 100rpx;
+    text-align: center;
+    color: #999;
+}
+
+.calendar-header-t {
+    flex: 1;
+    text-align: center;
+    font-size: 32rpx;
+}
+
+.calendar-mounth-title {
+    height: 60rpx;
+    line-height: 60rpx;
+    font-size: 24rpx;
+    padding: 0 40rpx;
+    border-bottom: 1px solid #efefef;
+}
+
+.calendar-content,.calendar-content_amn {
+    padding: 20rpx;
+    font-size: 24rpx;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+.calendar-content_amn {
+    position: absolute;
+    width: 100%;
+    top: 161rpx;
+    left: 0;
+    z-index: 999;
+}
+
+.calendar-content-item {
+    position: relative;
+    width: 80rpx;
+    height: 80rpx;
+    font-size: 28rpx;
+    line-height: 50rpx;
+    text-align: center;
+    border-radius: 100%;
+}
+
+.calendar-content-item-active {
+    color: #fff;
+    background-color: #5192ff;
+    box-shadow: 4rpx 6rpx 18rpx 0 rgba(15,76,179,.21);
+}
+
+.calendar-content-item-desc,.calendar-content-item-desc-full {
+    display: block;
+    position: absolute;
+    width: 100%;
+    bottom: 0rpx;
+    left: 0;
+    font-size: 18rpx;
+    font-weight: 400;
+    color: #5192ff;
+}
+
+.calendar-content-item-desc-full {
+    color: #ec4a85;
+}
+
+.calendar-content-item-active .calendar-content-item-desc,.calendar-content-item-active .calendar-content-item-desc-full {
+    color: #fff;
+}
+
+.calendar-content-disable {
+    color: #999;
+}

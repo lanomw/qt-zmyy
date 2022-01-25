@@ -1,0 +1,16 @@
+<view class="container">
+    <view bindtap="clearStorage" class="cell">
+        <view class="cell-title">清除缓存</view>
+        <view class="cell-content"></view>
+        <view class="cell-arrow">
+            <text class="iconfont iconxiayibu2" decode="true"></text>
+        </view>
+    </view>
+    <view bindtap="cancellation" class="cell">
+        <view class="cell-title">账号注销</view>
+        <view class="cell-content">注销后无法恢复，请谨慎操作</view>
+        <view class="cell-arrow">
+            <text class="iconfont iconxiayibu2" decode="true"></text>
+        </view>
+    </view>
+</view>

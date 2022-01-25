@@ -1,0 +1,7 @@
+{
+    "usingComponents": {
+        "zf-card": "/commons/components/card/card"
+    },
+    "navigationBarTitleText": "我的预约",
+    "enablePullDownRefresh": true
+}

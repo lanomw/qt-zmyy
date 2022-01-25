@@ -1,0 +1,140 @@
+
+
+素材阅读与下载地址 - 穿甲兵技术社区 https://www.chuanjiabing.com
+ 
+ ## 内容速览
+
+1、了解小程序逆向和PC端JS逆向的差异
+2、小程序逆向基本流程
+3、小程序逆向所需设备与环境
+4、学会使用小程序逆向解包工具
+5、小程序目录结构
+6、实践：小程序逆向静态分析
+7、实践：小程序逆向动态调试
+
+
+## 知识点一 差异
+PC 端 JS 逆向，代码直接可读 - 小程序 JS 逆向，代码需解包；
+PC 端 JS 逆向，可直接断点调试 - 小程序 JS 逆向，断点调试需拿到完整代码包；
+PC 端 JS 逆向，只需要使用开发者工具- 小程序 JS 逆向，抓包工具、代码解包工具、系统文件读写工具、模拟器/手机、微信开发者工具；
+
+## 知识点二 基本流程
+1、首先确定要采集的数据，然后配置手机/模拟器，接着抓包，最后确定需要逆向的参数；
+2、到指定文件路径找到小程序文件包，提取到电脑后借助工具进行解包；
+3、对解包完成后的小程序代码进行静态分析；
+4、如果第 3 步无法解读算法，对小程序进行动态调试；
+5、完成算法解读，复现算法或调用算法对应的代码；
+
+## 设备与环境
+1、root过的手机或者安卓模拟器x1
+2、网络抓包工具 x1
+3、小程序代码解包工具 x1
+4、微信开发者工具 x1
+5、NodeJS运行环境 x1
+6、系统文件读写工具 x1
+7、开发者常用 IDE x1，例如 VsCode
+
+## 小程序解包工具的使用
+0、确认开启 root
+1、在指定路径找到小程序包
+2、将小程序包复制到电脑后使用工具直接解包
+
+mumu模拟器右上角菜单选项-系统设置-开启root
+小程序包路径 /data/data/com.tencent.mm/MicroMsg/SmallProjectName/appbrand/pkg，通过时间或者排除法确定小程序包
+
+## 小程序目录结构
+目录结构几乎固定  https://developers.weixin.qq.com/miniprogram/dev/framework/structure.html
+入口文件为 app.js，类似于 Golang 的 main.go 文件
+...
+  ...
+
+## 静态分析
+1、搜索法：参数名称搜索、接口名称搜索；
+2、目录范围查找：根据接口名称或者功能模块名称缩小范围，人工查看代码；
+3、常见逻辑猜测法：常见加密方式特征、接口常用算法；
+
+## 动态调试
+1、小程序代码需完整解包；
+2、使用微信小程序IDE加载代码；
+3、对项目进行一些简单的基础配置；
+
+
+## 小程序逆向小结
+1、能猜就猜
+2、不能猜就静态分析
+3、静态分析没头绪就动态调试
+
+
+
+## 实践篇
+
+穿甲兵社区动态调试
+十荟团小程序安全防护静态分析
+
+
+十荟团 
+
+```
+{
+	"code": 0,
+	"msg": "请求成功",
+	"data": "SMXsVDKNLZ96OH88Mtx6F5tx6ApvUlDhEAfDbtWUi1U7nLF/WC6WKt2CLp7z7ewJdnIf/Eh1Ec++jiePmgl8dDg/pB5Qh4tHHyWtq2D8Kpv8iAMTSkyUnVakpn/7iJcSY82Is2JGaaInRDRkLMuGffn2H6i+H1ID9X5tSt2tApK0IfcFCY29YuLj+j4gDczWtnjNsVBB2d9Dmo6ZiT/xZ11lWDEumsgXxWgOjmDnwDoiR2nznrDddzsKVPn1WhzX1+K+i8hnyKVE9tXtsVqZ+8V9FvRdzrrOA0sjcFVC4M8Ga5vY0Iov1rSivKpTUKl/CIMNtaXV9PVrD0sVHGIEzYE2E44AwgxJfdZvmuu0zSaehbh5K4iiKXbLmzSWsJY1UY32uDbcHKZ8ld3TJiqgxJpK0qg+tQdyHsGN6wChsPVYsSqCyal51qO9pDHMrAeqsLVIbaBRJ9isk9bA0w7G1WXFEqOOZfN9mH7bNvh4tLoIP+G14hogAzy0dnvTk8Aj",
+	"enCode": 1
+}
+```
+
+
+https://api.nicetuan.net/user/isPartner
+
+首先根据 URL 搜索 isPartner，并没有什么结果
+
+然后分析返回的肯定是个 JOSN，就搜索 JSON.parse 得到 14E04AD47F9912CF728622D30E229B22.js:58 有个 JSON.parse 
+并发现了 AES_KEY 根据代码猜测使用了 AES
+
+搜索 AES_KEY 在 app.js:306 发现 _initEncryptParam
+
+```
+key: "_initEncryptParam",
+value: function() {
+	for (var e = (0, u.md5)("sht_" + o.
+      default.$appConfig.source + "_" + o.
+      default.$appConfig.wechatCheckVer + "_" + p.ENCRYPT_KEY).toUpperCase(), t = "", a = e.length - 1; a > 15; a--) t += e.charAt(a);
+	t = t.toLowerCase(),
+	this.globalData.AES_KEY = e,
+	this.globalData.AES_IV = t;
+}
+```
+
+简单化 AES_KEY = e,AES_IV = t
+
+整理 e = MD5("sht_" + o.default.$appConfig.source + "_" + o.default.$appConfig.wechatCheckVer + "_" + p.ENCRYPT_KEY).toUpperCase()
+
+搜索 wechatCheckVer，得到 app.js:389 wechatCheckVer: "2.55.0",source: "weapp",
+
+简化 e = MD5("sht_" + "2.55.0" + "_" + "weapp" + "_" + p.ENCRYPT_KEY).toUpperCase()
+
+搜索 ENCRYPT_KEY 得到 45DBA3557F9912CF23BDCB52F4339B22.js:76, 7B853E6EB9076E63BB4BEAC830561F40
+
+简化 e = MD5("sht_" + "2.55.0" + "_" + "weapp" + "_" + "7B853E6EB9076E63BB4BEAC830561F40").toUpperCase()
+
+解出 AES_KEY = MD5("sht_2.55.0_weapp_7B853E6EB9076E63BB4BEAC830561F40") 转大写 -> 00CD19B05DE9393439F7699095BC2BF6
+
+简化 _initEncryptParam 为 
+
+```
+for (var e = "00CD19B05DE9393439F7699095BC2BF6", t = "", a = e.length - 1; a > 15; a--) t += e.charAt(a);
+```
+
+解出 AES_IV 打开浏览器 console，运行，得到 6FB2CB5909967F93，再 toLowerCase() 得到  6fb2cb5909967f93
+
+
+搜索 AES.decrypt  AES.encrypt B2D268637F9912CFD4B40064DF999B22.js:17 找到 模式为 CBC，填充为 PK7，结果转UTF8
+
+
+
+
+
+
+
+
+

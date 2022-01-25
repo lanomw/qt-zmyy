@@ -1,0 +1,95 @@
+page {
+    background-color: #5192ff;
+}
+
+.bg {
+    width: 100%;
+}
+
+.q-box {
+    width: calc(100% - 64rpx);
+    position: absolute;
+    top: 200rpx;
+    left: 32rpx;
+    background-color: #fff;
+    border-radius: 30rpx;
+    overflow: hidden;
+    padding: 0 32rpx;
+    box-sizing: border-box;
+    margin-bottom: 200rpx;
+}
+
+.qb-title {
+    width: 100%;
+    margin: 48rpx 0 36rpx;
+    color: #5192ff;
+    font-size: 36rpx;
+    font-weight: 700;
+    text-align: center;
+}
+
+.qb-desc {
+    font-size: 26rpx;
+    color: #999;
+    margin-bottom: 46rpx;
+    line-height: 46rpx;
+}
+
+.qb-inner {
+    height: 88rpx;
+    line-height: 88rpx;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 28rpx;
+}
+
+.qb-inner-label {
+    font-size: 28rpx;
+    color: #666;
+}
+
+.qb-inner-content {
+    display: flex;
+    justify-content: right;
+}
+
+.qb-content-btn {
+    width: 78rpx;
+    height: 42rpx;
+    margin-top: 23rpx;
+    line-height: 42rpx;
+    font-size: 28rpx;
+    color: #676c75;
+    border: 1px solid #a8b2b9;
+    border-radius: 42rpx;
+    text-align: center;
+}
+
+.qb-content-btn:first-child {
+    margin-right: 24rpx;
+}
+
+.qb-content-btn-act {
+    color: #5192ff;
+    border-color: #5192ff;
+}
+
+.qb-submit {
+    height: 88rpx;
+    margin: 60rpx 0 88rpx;
+    font-size: 36rpx;
+    color: #fff;
+    text-align: center;
+    border-radius: 88rpx;
+    background-color: #5192ff;
+    box-shadow: 4rpx 6rpx 26rpx 4rpx rgba(15,76,179,.21);
+}
+
+.qb-inner-content-text {
+    font-size: 28rpx;
+    color: #5192ff;
+}
+
+.qb-inner-content-text .iconfont {
+    color: #a4a4a4;
+}

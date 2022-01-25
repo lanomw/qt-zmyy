@@ -1,0 +1,98 @@
+<view class="container" wx:if="{{cdcInfo!==''&&reloadVisible==false}}">
+    <view class="povinfo">
+        <view class="zf-inner">
+            <view class="povinfo-face">
+                <image binderror="loaderror" mode="widthFix" src="{{cdcInfo.BigPic}}" style="width:100%"></image>
+            </view>
+            <view class="povinfo-detail">
+                <view class="povinfo-detail-title">{{cdcInfo.cname}}</view>
+                <view style="height: 30rpx;"></view>
+                <view class="povinfo-detail-instance">
+                    <text>支付方式</text>
+                    <view class="icon-paymodes">
+                        <image class="icon-paymode" mode="widthFix" src="../../images/icon-alipay.png" wx:if="{{cdcInfo.payment.alipay=='true'}}"></image>
+                        <image class="icon-paymode" mode="widthFix" src="../../images/icon-cashier.png" wx:if="{{cdcInfo.payment.cashier=='true'}}"></image>
+                        <image class="icon-paymode" mode="widthFix" src="../../images/icon-wechat.png" wx:if="{{cdcInfo.payment.WechatPay=='true'}}"></image>
+                        <image class="icon-paymode" mode="widthFix" src="../../images/icon-unionpay.png" wx:if="{{cdcInfo.payment.UnionPay=='true'}}"></image>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view bindtap="jump" class="zf-panel zf-inner povinfo-attr" data-url="/packages/pov/pages/vaccinDetail/vaccinDetail?id={{cdcInfo.id}}">
+        <view class="zf-panel-label">
+            <text class="iconfont zf-panel-icon iconyiyuan2" decode="true"></text>
+            <text>单位简介</text>
+        </view>
+        <view class="zf-panel-text">
+            <text class="iconfont zf-panel-icon iconxiayibu2" decode="true"></text>
+        </view>
+    </view>
+    <view bindtap="toMap" class="zf-panel zf-inner povinfo-attr">
+        <view class="zf-panel-label">
+            <text class="iconfont zf-panel-icon icondingwei" decode="true"></text>
+            <text>{{cdcInfo.addr||'暂无数据'}}</text>
+        </view>
+        <view class="zf-panel-text">
+            <text class="iconfont zf-panel-icon iconxiayibu2" decode="true"></text>
+        </view>
+    </view>
+    <view bindtap="call" class="zf-panel zf-inner povinfo-attr" data-tel="{{cdcInfo.tel}}">
+        <view class="zf-panel-label">
+            <text class="iconfont zf-panel-icon icondianhua2" decode="true"></text>
+            <text>{{cdcInfo.tel||'暂无数据'}}</text>
+        </view>
+        <view class="zf-panel-text">
+            <text class="iconfont zf-panel-icon iconxiayibu2" decode="true"></text>
+        </view>
+    </view>
+    <official-account binderror="officialErr" style="width:100%; margin-top: 16rpx;" wx:if="{{officialVisible}}"></official-account>
+    <image mode="widthFix" src="../../images/banner-official.jpg" style="width: 100%; margin-top: 16rpx;" wx:if="{{!officialVisible}}"></image>
+    <view class="zf-panel vaccin-box" wx:for="{{cdcInfo.list}}" wx:key="index">
+        <view class="zf-inner">
+            <view class="zf-inner-l">
+                <view class="vaccin-title">{{item.text}}</view>
+                <view class="vaccin-tags zf-inner" wx:if="{{item.tags.length>0}}">
+                    <view class="vaccin-tag {{index<2?'vaccin-tag-yellow':'vaccin-tag-blue'}}" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="index">{{tag}}</view>
+                </view>
+                <view class="vaccin-date" wx:if="{{item.date!='暂无'}}">预约时间：{{item.date}}</view>
+                <view class="vaccin-remarks" wx:if="{{item.remarks}}">温馨提示：{{item.remarks}}</view>
+            </view>
+            <view class="zf-inner-r">
+                <view class="vaccin-price" wx:if="{{item.price>0}}">
+                    <text class="vaccin-price-tip">参考价：</text>
+                    <text class="vaccin-price-icon">¥</text>
+                    <text class="vaccin-price-number">{{item.price}}</text>
+                    <text class="vaccin-price-unit">/支</text>
+                </view>
+                <view class="vaccin-price" wx:if="{{item.price==0}}">
+                    <text class="vaccin-price-tip">参考价：</text>
+                    <text class="vaccin-price-number">免费</text>
+                </view>
+                <view class="zf-inner vaccin-btns">
+                    <button bindtap="jump" class="vaccin-bt" data-pindex="{{index}}" data-url="{{item.questionnaireId==0||item.isExist||item.questionnaireId==questionnaireId?'/packages/pov/pages/subscribeDate/subscribeDate':'/packages/pov/pages/questionnaire/questionnaire'}}?pid={{item.id}}&pname={{item.text}}&IdcardLimit={{cdcInfo.IdcardLimit}}&questionnaireId={{item.questionnaireId}}" wx:if="{{item.enable}}">{{item.BtnLable}}</button>
+                    <button class="vaccin-bt-disable" wx:if="{{!item.enable}}">{{item.BtnLable}}</button>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view style="height: 200rpx;"></view>
+</view>
+<view class="container">
+    <view class="empty" wx:if="{{!cdcInfo.list&&cdcInfo!==''&&reloadVisible==false}}">
+        <image mode="widthFix" src="/commons/icons/icon-empty.png"></image>
+        <view>暂无可预约产品</view>
+    </view>
+    <view class="empty" wx:if="{{reloadVisible==true}}">
+        <image mode="widthFix" src="/commons/icons/icon-empty.png"></image>
+        <view>前方拥堵，请稍后再试</view>
+        <button bindtap="reload" class="reload">重新加载</button>
+    </view>
+    <view class="empty empty-loading" wx:if="{{cdcInfo===''&&reloadVisible==false}}">
+        <image mode="widthFix" src="/commons/images/loading.gif"></image>
+    </view>
+    <view style="width: 100%; height: 100rpx"></view>
+</view>
+<view class="container">
+    <zf-notice content="{{noticeHtml}}" show="{{noticeHtml}}"></zf-notice>
+</view>

@@ -1,0 +1,53 @@
+<view class="container" wx:if="{{reloadVisible==false}}">
+    <view class="mine-h-bg">
+        <image mode="widthFix" src="../../commons/icons/tx-image.png"></image>
+    </view>
+    <view class="zf-inner mine-h-profile">
+        <view class="mine-h-pic">
+            <open-data type="userAvatarUrl"></open-data>
+        </view>
+        <view bindtap="jump" class="mine-h-info" data-url="/packages/mine/profile/profile">
+            <view class="mine-h-info-name">
+                <view wx:if="{{userInfo.cname}}">
+          {{userInfo.cname}}
+          <text decode="true">&nbsp;&nbsp;</text>
+                </view>
+                <view wx:if="{{!userInfo.cname}}">
+                    <open-data type="userNickName"></open-data>
+                    <text decode="true">&nbsp;&nbsp;</text>
+                </view>
+            </view>
+            <view class="mine-h-info-desc">
+                <image mode="widthFix" src="../../commons/icons/sex-female.png" wx:if="{{userInfo.sex==2}}"></image>
+                <image mode="widthFix" src="../../commons/icons/sex-male.png" wx:if="{{userInfo.sex==1}}"></image>
+            </view>
+        </view>
+    </view>
+    <view class="cell">
+        <view bindtap="jump" class="cell-item zf-inner" data-url="/packages/mine/profile/profile">
+            <image class="cell-icon-pre" mode="widthFix" src="/commons/icons/grxx-button.png"></image>
+            <view class="cell-label">个人信息</view>
+            <image class="cell-icon-neg" mode="widthFix" src="/commons/icons/left-button.png"></image>
+        </view>
+        <view bindtap="jump" class="cell-item zf-inner" data-url="/packages/mine/subscribeList/subscribeList">
+            <image class="cell-icon-pre" mode="widthFix" src="/commons/icons/yyxx-button.png"></image>
+            <view class="cell-label">预约信息</view>
+            <image class="cell-icon-neg" mode="widthFix" src="/commons/icons/left-button.png"></image>
+        </view>
+        <view bindtap="subscribe" class="cell-item zf-inner">
+            <image class="cell-icon-pre" mode="widthFix" src="/commons/icons/icon-dy.png"></image>
+            <view class="cell-label">订阅通知</view>
+            <image class="cell-icon-neg" mode="widthFix" src="/commons/icons/left-button.png"></image>
+        </view>
+        <view bindtap="jump" class="cell-item zf-inner" data-url="/packages/setting/setting">
+            <image class="cell-icon-pre" mode="widthFix" src="/commons/icons/icon-setting.png"></image>
+            <view class="cell-label">设置</view>
+            <image class="cell-icon-neg" mode="widthFix" src="/commons/icons/left-button.png"></image>
+        </view>
+    </view>
+</view>
+<view class="empty" wx:if="{{reloadVisible==true}}">
+    <image mode="widthFix" src="/commons/icons/icon-empty.png"></image>
+    <view>前方拥堵，请稍后再试</view>
+    <button bindtap="reload" class="reload">重新加载</button>
+</view>

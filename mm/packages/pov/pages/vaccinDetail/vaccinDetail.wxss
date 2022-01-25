@@ -1,0 +1,146 @@
+.album {
+    z-index: 0;
+}
+
+.album-item {
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.wx-swiper-dots {
+    margin-bottom: 50rpx;
+}
+
+.zf-header-h1 {
+    height: 88rpx;
+    line-height: 88rpx;
+    font-size: 22rpx;
+    color: #393a50;
+    min-width: 0;
+    padding: 0 36rpx;
+}
+
+.content,.zf-header-h1 {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.content {
+    padding: 0 32rpx;
+    margin-top: -50rpx;
+    overflow: hidden;
+    z-index: 100;
+}
+
+.povinfo {
+    width: 100%;
+    border-radius: 16rpx;
+    overflow: hidden;
+}
+
+.povinfo-base {
+    padding: 30rpx;
+    background-color: #fff;
+    box-sizing: border-box;
+}
+
+.povinfo-face {
+    width: 160rpx;
+    height: 160rpx;
+    margin-right: 24rpx;
+    border-radius: 16rpx;
+    overflow: hidden;
+    background-color: #f5f9fc;
+}
+
+.povinfo-detail {
+    flex: 1;
+    box-sizing: border-box;
+    min-width: 0;
+}
+
+.povinfo-detail-title {
+    font-size: 30rpx;
+    color: #283036;
+    font-size: 32rpx;
+    font-weight: 700;
+}
+
+.povinfo-detail-date {
+    font-size: 22rpx;
+    color: #666;
+    margin: 20rpx 0;
+}
+
+.povinfo-detail-instance {
+    font-size: 18rpx;
+    color: #999;
+}
+
+.povinfo-attr {
+    height: 88rpx;
+    line-height: 88rpx;
+    margin-top: 1px;
+}
+
+.zf-panel {
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+    padding: 0 32rpx;
+    font-size: 28rpx;
+    color: #666;
+    background-color: #fff;
+}
+
+.zf-panel-icon {
+    color: #999;
+    font-size: 30rpx;
+    margin-right: 10rpx;
+}
+
+.zf-panel-icon.iconxiayibu2 {
+    font-size: 24rpx;
+    margin-right: 0;
+}
+
+.richtext-title {
+    font-size: 30rpx;
+    font-weight: 700;
+    margin-bottom: 20rpx;
+}
+
+.richtext-content {
+    font-size: 28rpx;
+    color: #283036;
+}
+
+.richtext {
+    width: 100%;
+    padding: 30rpx 30rpx 50rpx;
+    margin-top: 16rpx;
+    border-radius: 16rpx;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+.povinfo-detail-instance {
+    position: relative;
+}
+
+.icon-paymodes {
+    position: absolute;
+    top: -10rpx;
+    left: 70rpx;
+}
+
+.povinfo-detail-instance .icon-paymode {
+    width: 40rpx;
+    height: 40rpx;
+    margin-left: 10rpx;
+}
+
+.empty {
+    margin-top: 20vh;
+}

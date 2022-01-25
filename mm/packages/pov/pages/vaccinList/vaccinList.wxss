@@ -1,0 +1,283 @@
+.zf-header-h1 {
+    height: 88rpx;
+    line-height: 88rpx;
+    font-size: 22rpx;
+    color: #393a50;
+    padding: 0 36rpx;
+}
+
+.povinfo,.zf-header-h1 {
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+}
+
+.povinfo {
+    margin-top: 16rpx;
+    padding: 24rpx 30rpx;
+    background-color: #fff;
+}
+
+.povinfo-face {
+    width: 160rpx;
+    height: 160rpx;
+    margin-right: 24rpx;
+    border-radius: 16rpx;
+    overflow: hidden;
+    background-color: #f5f9fc;
+}
+
+.povinfo-detail {
+    flex: 1;
+    box-sizing: border-box;
+    min-width: 0;
+}
+
+.povinfo-detail-title {
+    font-size: 30rpx;
+    color: #283036;
+    font-size: 32rpx;
+    font-weight: 700;
+}
+
+.povinfo-detail-date {
+    font-size: 22rpx;
+    color: #666;
+    margin: 20rpx 0;
+}
+
+.povinfo-detail-instance {
+    font-size: 18rpx;
+    color: #999;
+}
+
+.povinfo-attr {
+    height: 88rpx;
+    line-height: 88rpx;
+    margin-top: 1px;
+}
+
+.zf-panel {
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+    padding: 0 32rpx;
+    font-size: 28rpx;
+    color: #666;
+    background-color: #fff;
+}
+
+.zf-panel-icon {
+    color: #999;
+    font-size: 30rpx;
+    margin-right: 10rpx;
+}
+
+.zf-panel-icon.iconxiayibu2 {
+    font-size: 24rpx;
+    margin-right: 0;
+}
+
+.zf-panel-label {
+    white-space: nowrap;
+    word-wrap: normal;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.vaccin-box {
+    position: relative;
+    min-height: 200rpx;
+    margin-top: 16rpx;
+    padding-bottom: 20rpx;
+}
+
+.zf-inner-l {
+    flex: 1;
+}
+
+.vaccin-title {
+    width: 100%;
+    padding-top: 20rpx;
+    line-height: 42rpx;
+    font-size: 29rpx;
+    font-weight: 700;
+    box-sizing: border-box;
+    color: #333;
+}
+
+.vaccin-date {
+    margin: 20rpx 0 0;
+}
+
+.vaccin-date,.vaccin-remarks {
+    min-height: 30rpx;
+    line-height: 30rpx;
+    position: relative;
+    font-size: 24rpx;
+    color: #999;
+    box-sizing: border-box;
+}
+
+.vaccin-remarks {
+    margin: 14rpx 0 0;
+}
+
+.vaccin-tags {
+    margin-top: 14rpx;
+    justify-content: left;
+}
+
+.vaccin-tag {
+    line-height: 28rpx;
+    font-size: 20rpx;
+    padding: 4rpx 16rpx;
+    border-width: 1rpx;
+    border-style: solid;
+    border-radius: 20rpx;
+    margin-left: 10rpx;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.vaccin-tag:first-child {
+    margin: 0;
+}
+
+.vaccin-tag-blue {
+    color: #5192ff;
+    border-color: #5192ff;
+}
+
+.vaccin-tag-gray {
+    color: #999;
+    border-color: #999;
+}
+
+.vaccin-tag-red {
+    color: #ec4a85;
+    border-color: #ec4a85;
+}
+
+.vaccin-tag-yellow {
+    color: #ffba00;
+    border-color: #ffba00;
+}
+
+.zf-inner-r {
+    min-width: 200rpx;
+}
+
+.vaccin-price {
+    height: 80rpx;
+    line-height: 80rpx;
+    text-align: right;
+    color: #fd854a;
+}
+
+.vaccin-price-tip {
+    font-size: 20rpx;
+    color: #c9c9d0;
+}
+
+.vaccin-price-icon {
+    font-size: 24rpx;
+}
+
+.vaccin-price-number {
+    font-size: 32rpx;
+    font-weight: 700;
+}
+
+.vaccin-price-unit {
+    font-size: 18rpx;
+    color: #999;
+}
+
+.vaccin-bt {
+    display: grid;
+    width: 160rpx;
+    height: 60rpx;
+    padding: 0;
+    border-radius: 30rpx;
+    background-color: #5192ff;
+    font-size: 24rpx;
+    color: #fff;
+    margin-right: 0;
+    box-shadow: 4rpx 6rpx 18rpx 0 rgba(15,76,179,.21);
+    overflow: hidden;
+}
+
+.vaccin-btns {
+    position: absolute;
+    right: 30rpx;
+    bottom: 20rpx;
+}
+
+.vaccin-bt-disable {
+    width: 160rpx;
+    height: 60rpx;
+    padding: 0;
+    border-radius: 30rpx;
+    background-color: #c5c9d0;
+    font-size: 24rpx;
+    color: #fff;
+    margin-right: 0;
+    overflow: hidden;
+}
+
+.btn-normal {
+    width: 140rpx;
+    height: 53rpx;
+    line-height: 53rpx;
+    border-radius: 53rpx;
+    background: none;
+    border: 1px solid #b7c1d2;
+    font-size: 26rpx;
+    letter-spacing: 3rpx;
+    box-shadow: none;
+    color: #333;
+    margin-right: 10rpx;
+}
+
+button::after {
+    border: none;
+}
+
+.povinfo-detail-instance .iconfont {
+    font-size: 36rpx;
+    margin-left: 16rpx;
+}
+
+.povinfo-detail-instance .iconfont.iconzhifubao {
+    color: #5192ff;
+}
+
+.povinfo-detail-instance .iconfont.iconshouru {
+    color: #fc6d1f;
+}
+
+.povinfo-detail-instance .iconfont.iconweixin {
+    font-size: 40rpx;
+    color: #11e634;
+}
+
+.povinfo-detail-instance {
+    position: relative;
+}
+
+.icon-paymodes {
+    position: absolute;
+    top: -10rpx;
+    left: 70rpx;
+}
+
+.povinfo-detail-instance .icon-paymode {
+    width: 40rpx;
+    height: 40rpx;
+    margin-left: 10rpx;
+}
+
+.empty {
+    margin-top: 20vh;
+}

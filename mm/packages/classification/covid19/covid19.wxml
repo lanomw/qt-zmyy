@@ -1,0 +1,25 @@
+<scroll-view scrollWithAnimation bindscroll="pagescroll" class="container" scrollIntoView="{{pagescrolltop}}" scrollY="{{!tmVisable}}">
+    <image bindtap="pagescrolltotop" class="scrolltop {{scrolltopVisible?'show':''}}" mode="widthFix" src="/commons/icons/icon-scrolltop.png"></image>
+    <searchbar bindinput="onsearch" cityname="{{name}}" class="searchbar" id="scrolltop"></searchbar>
+    <view class="scroll-scell" wx:if="{{povlist.length>0}}">
+        <zf-card bindtap="jump" class="card-list" data-url="/packages/pov/pages/vaccinList/vaccinList?id={{item.id}}" descnd="{{item.addr}}" descndIcon="icondingwei" descst="{{item.tel}}" descstIcon="icondianhua2" pic="{{item.SmallPic=='https://app.zhifeishengwu.com/img/none.png'?'/commons/images/none.png':item.SmallPic}}" rangeIndex="{{index}}" rangeTotal="{{povlist.length}}" status="{{item.distance+'km'}}" title="{{item.cname}}" titleTag="{{item.isSubScribe}}" wx:if="{{!item.hide}}" wx:for="{{povlist}}" wx:key="index"></zf-card>
+        <view style="height: 200rpx;"></view>
+    </view>
+    <view class="empty" wx:if="{{povlist.length<1&&povlist!==''}}">
+        <image mode="widthFix" src="/commons/icons/icon-empty.png"></image>
+        <view>暂无数据</view>
+    </view>
+    <view class="empty empty-loading" wx:if="{{povlist===''&&reloadVisible==false&&positionFailed==false}}">
+        <image mode="widthFix" src="/commons/images/loading.gif"></image>
+    </view>
+    <view class="empty" wx:if="{{reloadVisible==true&&povlist===''&&positionFailed==false}}">
+        <image mode="widthFix" src="/commons/icons/icon-empty.png"></image>
+        <view>前方拥堵，请稍后再试</view>
+        <button bindtap="reload" class="reload">重新加载</button>
+    </view>
+    <view class="empty" wx:if="{{positionFailed==true&&povlist===''&&reloadVisible==false}}">
+        <image mode="widthFix" src="/commons/icons/icon-empty.png"></image>
+        <view>请确保【手机定位功能】已开启</view>
+        <button bindtap="reload" class="reload">重新授权</button>
+    </view>
+</scroll-view>

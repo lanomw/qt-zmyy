@@ -1,0 +1,79 @@
+<view class="container">
+    <swiper autoplay circular indicatorDots class="album" indicatorActiveColor="#FFFFFF" style="{{albumStyle}}">
+        <swiper-item wx:for="{{cdcInfo.banner}}" wx:key="{{index}}">
+            <image bindload="albumLoad" class="album-item" mode="aspectFill" src="{{item.imgurl}}"></image>
+        </swiper-item>
+    </swiper>
+    <view class="content">
+        <view class="povinfo">
+            <view class="zf-inner povinfo-base">
+                <view class="povinfo-face">
+                    <image binderror="loaderror" mode="widthFix" src="{{cdcInfo.BigPic}}" style="width:100%"></image>
+                </view>
+                <view class="povinfo-detail">
+                    <view class="povinfo-detail-title">{{cdcInfo.cname}}</view>
+                    <view style="height: 30rpx;"></view>
+                    <view class="povinfo-detail-instance">
+                        <text>支付方式</text>
+                        <view class="icon-paymodes">
+                            <image class="icon-paymode" mode="widthFix" src="../../images/icon-alipay.png" wx:if="{{cdcInfo.payment.alipay=='true'}}"></image>
+                            <image class="icon-paymode" mode="widthFix" src="../../images/icon-cashier.png" wx:if="{{cdcInfo.payment.cashier=='true'}}"></image>
+                            <image class="icon-paymode" mode="widthFix" src="../../images/icon-wechat.png" wx:if="{{cdcInfo.payment.WechatPay=='true'}}"></image>
+                            <image class="icon-paymode" mode="widthFix" src="../../images/icon-unionpay.png" wx:if="{{cdcInfo.payment.UnionPay=='true'}}"></image>
+                        </view>
+                    </view>
+                </view>
+            </view>
+            <view bindtap="toMap" class="zf-panel zf-inner povinfo-attr">
+                <view class="zf-panel-label">
+                    <text class="iconfont zf-panel-icon icondingwei" decode="true"></text>
+                    <text>{{cdcInfo.addr||'暂无数据'}}</text>
+                </view>
+                <view class="zf-panel-text">
+                    <text class="iconfont zf-panel-icon iconxiayibu2" decode="true"></text>
+                </view>
+            </view>
+            <view bindtap="call" class="zf-panel zf-inner povinfo-attr" data-tel="{{cdcInfo.tel}}">
+                <view class="zf-panel-label">
+                    <text class="iconfont zf-panel-icon icondianhua2" decode="true"></text>
+                    <text>{{cdcInfo.tel||'暂无数据'}}</text>
+                </view>
+                <view class="zf-panel-text">
+                    <text class="iconfont zf-panel-icon iconxiayibu2" decode="true"></text>
+                </view>
+            </view>
+            <view bindtap="jump" class="zf-panel zf-inner povinfo-attr" data-url="/packages/pov/pages/vaccinNotice/vaccinNotice">
+                <view class="zf-panel-label">
+                    <text class="iconfont zf-panel-icon iconyinliang" decode="true"></text>
+                    <text>单位公告</text>
+                </view>
+                <view class="zf-panel-text">
+                    <text class="iconfont zf-panel-icon iconxiayibu2" decode="true"></text>
+                </view>
+            </view>
+        </view>
+        <view class="richtext">
+            <view class="richtext-title">单位简介</view>
+            <view class="richtext-empty" wx:if="{{!cdcInfo.describe}}">暂无介绍</view>
+            <rich-text class="richtext-content" nodes="{{cdcInfo.describe}}"></rich-text>
+        </view>
+    </view>
+</view>
+<view class="container">
+    <view class="empty" wx:if="{{!cdcInfo.list&&cdcInfo!==''&&reloadVisible==false}}">
+        <image mode="widthFix" src="/commons/icons/icon-empty.png"></image>
+        <view>暂无可预约产品</view>
+    </view>
+    <view class="empty" wx:if="{{reloadVisible==true}}">
+        <image mode="widthFix" src="/commons/icons/icon-empty.png"></image>
+        <view>前方拥堵，请稍后再试</view>
+        <button bindtap="reload" class="reload">重新加载</button>
+    </view>
+    <view class="empty empty-loading" wx:if="{{cdcInfo===''&&reloadVisible==false}}">
+        <image mode="widthFix" src="/commons/images/loading.gif"></image>
+    </view>
+    <view style="width: 100%; height: 100rpx"></view>
+</view>
+<view class="container">
+    <zf-notice content="{{noticeHtml}}" show="{{noticeHtml}}"></zf-notice>
+</view>

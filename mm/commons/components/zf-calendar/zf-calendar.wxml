@@ -1,0 +1,32 @@
+<view class="calendar">
+    <view class="calendar-header">
+        <view class="calendar-inner">
+            <view bindtap="changeCalendar" class="calendar-header-l" data-handle="pre">
+                <text class="iconfont iconzuo" decode="true"></text>
+            </view>
+            <view class="calendar-header-t">{{curTitle}}</view>
+            <view bindtap="changeCalendar" class="calendar-header-r" data-handle="neg">
+                <text class="iconfont iconxiayibu2" decode="true"></text>
+            </view>
+        </view>
+        <view class="calendar-inner calendar-mounth-title">
+            <view wx:for="{{mounthTitle}}" wx:key="index">{{item}}</view>
+        </view>
+    </view>
+    <view animation="{{dateAnimate}}" class="calendar-content" style="width: {{dateWidth}}; transform: translateX({{dateLen_1}}px);">
+        <view class="calendar-inner" wx:for="{{curDays}}" wx:for-item="i" wx:key="index">
+            <view animation="{{curDay==item.date&&!item.disable?dayAnimate:''}}" bindtap="{{item.disable?'':'setDate'}}" class="calendar-content-item {{curDay==item.date&&!item.disable?'calendar-content-item-active':''}} {{item.disable?'calendar-content-disable':''}}" data-date="{{item.date}}" wx:for="{{i}}" wx:key="index">
+          {{item.date}}
+          <b class="{{item.desc=='可预约'?'calendar-content-item-desc':'calendar-content-item-desc-full'}}">{{item.desc}}</b>
+            </view>
+        </view>
+    </view>
+    <view animation="{{dateAnimate2}}" class="calendar-content_amn" style="width: {{dateWidth}}; transform: translateX({{dateLen_2}}px);">
+        <view class="calendar-inner" wx:for="{{curDays}}" wx:for-item="i" wx:key="index">
+            <view animation="{{curDay==item.date&&!item.disable?dayAnimate:''}}" bindtap="{{item.disable?'':'setDate'}}" class="calendar-content-item {{curDay==item.date&&!item.disable?'calendar-content-item-active':''}} {{item.disable?'calendar-content-disable':''}}" data-date="{{item.date}}" wx:for="{{i}}" wx:key="index">
+          {{item.date}}
+          <b class="{{item.desc=='可预约'?'calendar-content-item-desc':'calendar-content-item-desc-full'}}">{{item.desc}}</b>
+            </view>
+        </view>
+    </view>
+</view>

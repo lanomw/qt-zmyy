@@ -1,0 +1,62 @@
+<view class="calendar" wx:if="{{days.length>0&&reloadVisible==false}}">
+    <view class="calendar-header">
+        <view class="calendar-inner calendar-title">
+            <view class="calendar-title-item" wx:for="{{mt}}" wx:key="index">{{item}}</view>
+        </view>
+    </view>
+    <scroll-view scrollY bindscrolltolower="lower" class="calendar-scroll">
+        <view class="calendar-content" wx:for="{{days}}" wx:for-item="day" wx:key="index">
+            <view class="calendar-content-title">
+                <text decode="true">{{day.t}}</text>
+            </view>
+            <view class="calendar-inner" wx:for="{{day.d}}" wx:for-item="i" wx:key="{{item}}">
+                <view bindtap="{{item.s==0||item.s==1?'':'setDate'}}" class="calendar-content-item {{dfd==item.d&&item.s==2?'calendar-content-item-active':''}} {{item.s==0?'calendar-content-disable':''}}" data-date="{{item.d}}" wx:for="{{i}}" wx:key="index">{{item.n}}
+          <b class="{{item.s==2?'calendar-content-item-desc':'calendar-content-item-desc-full'}}">{{item.s==0?'':item.s==1?'已满':'可预约'}}</b>
+                </view>
+            </view>
+        </view>
+        <view class="calendar-content-tip">已经到底了</view>
+    </scroll-view>
+    <view class="calendar-time" wx:if="{{dfd!='请选择预约时间'&&dfdVisible}}">
+        <view class="calendar-time-title calendar-inner">
+            <view class="calendar-time-titlel">预约日期：{{dfd}}</view>
+            <view bindtap="dfdHandle" class="calendar-time-titler">
+                <text class="iconfont iconclose" decode="true"></text>
+            </view>
+        </view>
+        <view class="calendar-loading" wx:if="{{partLoading}}">
+            <image mode="widthFix" src="../../../../commons/images/loading.gif"></image>
+        </view>
+        <scroll-view scrollY bindscrolltolower="lower" class="calendar-time-scroll">
+            <view class="calendar-time-list calendar-inner" wx:if="{{!partLoading}}" wx:for="{{timeData.list}}" wx:key="index">
+                <view class="label calendar-inner">
+                    <view class="label-text">{{item.StartTime}} - {{item.EndTime}}</view>
+                    <view class="fs-24 label-text">（可预约：</view>
+                    <view class="tip label-text">{{item.qty}}</view>
+                    <view class="fs-24 label-text">
+                        <text decode="true">&nbsp;</text>剂）</view>
+                </view>
+                <button bindtap="redirectTo" class="btn" data-url="/packages/pov/pages/subScribeInfo/subScribeInfo?mxid={{item.mxid}}&customer={{item.customer}}&stime={{item.StartTime}}&etime={{item.EndTime}}&date={{dfd}}" wx:if="{{item.qty>0}}">预约</button>
+                <button class="btn bt-disable" wx:if="{{!item.enable&&item.qty<=0}}">已满</button>
+            </view>
+        </scroll-view>
+    </view>
+    <view class="calendar-time" wx:if="{{dfd=='请选择预约时间'&&dfdVisible}}">
+        <view class="calendar-time-title">{{dfd}}</view>
+        <view class="calendar-loading" wx:if="{{partLoading}}">
+            <image mode="widthFix" src="../../../../commons/images/loading.gif"></image>
+        </view>
+    </view>
+</view>
+<view class="empty" wx:if="{{days!==''&&days.length<1&&reloadVisible==false}}">
+    <image mode="widthFix" src="/commons/icons/icon-empty.png"></image>
+    <view>暂无可预约时间</view>
+</view>
+<view class="empty empty-loading" wx:if="{{days===''&&reloadVisible==false}}">
+    <image mode="widthFix" src="/commons/images/loading.gif"></image>
+</view>
+<view class="empty" wx:if="{{reloadVisible==true}}">
+    <image mode="widthFix" src="/commons/icons/icon-empty.png"></image>
+    <view>前方拥堵，请稍后再试</view>
+    <button bindtap="reload" class="reload">重新加载</button>
+</view>

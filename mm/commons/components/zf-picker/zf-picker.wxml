@@ -1,0 +1,23 @@
+<view class="container">
+    <slot bindtap="show" data-dfvalue="{{value}}" data-mode="{{mode}}" data-range="{{range}}" slot="base"></slot>
+    <view animation="{{_coverAnm}}" bindtap="hide" class="zf-picker-cover" wx:if="{{_visible}}"></view>
+    <view animation="{{_pickerAnm}}" class="zf-picker" wx:if="{{_visible}}">
+        <view class="zf-picker-header zf-inner">
+            <view bindtap="hide" class="zf-picker-header-l" style="color: {{lbtnColor}}">{{lbtnStr}}</view>
+            <view class="zf-picker-header-m">{{title}}</view>
+            <view bindtap="bindSelect" class="zf-picker-header-r" style="color: {{rbtnColor}}">{{rbtnStr}}</view>
+        </view>
+        <view class="zf-picker-content">
+            <picker-view bindchange="bindChange" bindpickend="bindpickend" bindpickstart="bindpickstart" indicatorStyle="height: 50px;" style="width: 100%; height: 300px;" value="{{value}}" wx:if="{{mode=='selector'}}">
+                <picker-view-column wx:for="{{_dateList}}" wx:for-item="i" wx:key="index">
+                    <view style="text-align: center;line-height: 50px" wx:for="{{i}}" wx:key="index">{{item}}</view>
+                </picker-view-column>
+            </picker-view>
+            <picker-view bindchange="bindChange" bindpickend="bindpickend" bindpickstart="bindpickstart" indicatorStyle="height: 50px;" style="width: 100%; height: 300px;" value="{{_dateDefault}}" wx:if="{{mode=='date'}}">
+                <picker-view-column wx:for="{{_dateList}}" wx:for-item="i" wx:key="index">
+                    <view style="text-align: center;line-height: 50px" wx:for="{{i}}" wx:key="index">{{item}}</view>
+                </picker-view-column>
+            </picker-view>
+        </view>
+    </view>
+</view>

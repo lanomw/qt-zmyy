@@ -1,0 +1,12 @@
+<view class="search-box">
+    <view class="zf-inner">
+        <view class="search-input">
+            <text class="iconfont iconsousuo" decode="true"></text>
+            <input bindinput="onsearch" class="search-input-ctrl" placeholder="搜索附近接种点" placeholderClass="searchtip" type="text" value="{{search}}"></input>
+        </view>
+        <view bindtap="jump" class="search-curpos" data-url="/packages/position/pages/search/search">
+            <text class="iconfont icondingweiweizhi" decode="true"></text>
+            <text>{{cityname}}</text>
+        </view>
+    </view>
+</view>

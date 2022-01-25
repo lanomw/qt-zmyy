@@ -1,0 +1,56 @@
+<view class="container">
+    <view class="position-box">
+        <view class="position-header">
+            <view class="search-box">
+                <view class="search-box-input">
+                    <input bindblur="onblur" bindinput="search" focus="{{isFocus}}" type="text"></input>
+                    <view bindtap="searchTipFocus" class="search-box-placeholder">
+                        <text class="iconfont iconsousuo" decode="true"></text>
+                        <text wx:if="{{searchTip}}">请输入所在城市名称</text>
+                    </view>
+                </view>
+            </view>
+            <view bindtap="bindChange" class="position-block" data-center="{{cinfo.center}}" data-code="{{cinfo.code}}" data-name="{{cinfo.name}}" data-pcode="{{cinfo.pCode}}" wx:if="{{isPosition==1&&cinfo.name!=''}}">
+                <text class="position-block-title">您正在看：{{cinfo.parent&&cinfo.parent.name}}{{cinfo.name}}</text>
+            </view>
+            <view class="position-block" wx:if="{{isPosition==-1}}">
+                <text class="position-block-title">定位失败，请手动选择</text>
+            </view>
+        </view>
+        <scroll-view scrollY bindscroll="onscroll" class="position-list" scrollIntoView="{{targetIndex}}" scrollWithAnimation="true" wx:if="{{!isLoading}}">
+            <view class="position-bank" wx:if="{{isPosition==1}}">
+                <view class="position-bank-title">当前定位</view>
+                <view class="position-bank-btns">
+                    <view bindtap="bindChange" class="position-bank-btn" data-acronym="{{matchData.capLetter}}" data-center="{{matchData.center}}" data-code="{{matchData.adcode}}" data-name="{{matchData.name}}" data-pname="{{matchData.parent.name}}" data-ppname="{{matchData.parent.parent.name}}" wx:if="{{matchData.name}}">
+                        <text class="iconfont icondingweiweizhi" decode="true">&nbsp;</text>
+                        <text>{{matchData.name}}</text>
+                    </view>
+                    <view bindtap="getLocation" class="position-bank-btn" wx:if="{{!matchData.name}}">
+                        <text>定位失败，点击重试</text>
+                        <text decode="true">&nbsp;</text>
+                        <text class="iconfont iconshuaxin" decode="true"></text>
+                    </view>
+                </view>
+            </view>
+            <view class="position-cell" wx:for="{{cityList}}" wx:key="index">
+                <view class="position-cell-item position-cell-title" id="{{index}}">{{index}}</view>
+                <view bindtap="bindChange" class="position-cell-content" data-acronym="{{j.capLetter}}" data-center="{{j.center}}" data-code="{{j.adcode}}" data-name="{{j.name}}" data-pname="{{j.parent.name}}" data-ppname="{{j.parent.parent.name}}" wx:for="{{item}}" wx:for-item="j" wx:key="i">
+                    <view class="position-cell-item">{{j.name}}</view>
+                </view>
+            </view>
+        </scroll-view>
+        <view class="position-index">
+            <view bindtap="scrollToByIndex" class="position-index-item {{curIndex==index?'position-index-item-active':''}}" data-index="{{index}}" wx:for="{{cityList}}" wx:key="index">{{index}}</view>
+        </view>
+        <scroll-view scrollY class="search-result" wx:if="{{!searchTip}}">
+            <view class="position-cell">
+                <view class="position-cell-content">
+                    <view bindtap="bindChange" class="position-cell-item" data-acronym="{{item.capLetter}}" data-center="{{item.center}}" data-code="{{item.adcode}}" data-name="{{item.name}}" data-pname="{{item.parent.name}}" data-ppname="{{item.parent.parent.name}}" wx:for="{{searchRes}}" wx:key="index">{{item.name}}{{item.parent&&item.parent.name?'，'+item.parent.name:''}}</view>
+                </view>
+            </view>
+        </scroll-view>
+    </view>
+    <view class="empty empty-loading" wx:if="{{isLoading}}">
+        <image mode="widthFix" src="../../../../commons/images/loading.gif"></image>
+    </view>
+</view>

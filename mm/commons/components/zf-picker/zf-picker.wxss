@@ -1,0 +1,43 @@
+.zf-picker {
+    min-height: 300px;
+    bottom: -300px;
+    box-shadow: 0 -10rpx 30rpx rgba(0,0,0,.1);
+    background-color: #fff;
+    z-index: 9999;
+}
+
+.zf-picker,.zf-picker-cover {
+    width: 100%;
+    position: absolute;
+    left: 0;
+}
+
+.zf-picker-cover {
+    height: 100vh;
+    bottom: 0;
+    z-index: 9998;
+}
+
+.zf-inner {
+    display: flex;
+    justify-content: space-between;
+}
+
+.zf-picker-header {
+    height: 80rpx;
+    line-height: 80rpx;
+    border-bottom: 1px solid #efefef;
+}
+
+.zf-picker-header-l,.zf-picker-header-r {
+    width: 150rpx;
+    text-align: center;
+    font-size: 24rpx;
+}
+
+.zf-picker-header-m {
+    flex: 1;
+    text-align: center;
+    font-size: 26rpx;
+    color: #222;
+}
