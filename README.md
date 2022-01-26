@@ -24,7 +24,7 @@
 ```
 
 ## 界面使用说明
-> ![img.png](./doc/assets/img_6.png)
+> ![img_6.png](./doc/assets/img_6.png)
 
 ## 加密源码
 
@@ -76,23 +76,21 @@ t && (e.data = JSON.parse(t));
 
 1. 下载安装charles
 2. 安装证书 
-> ![img.png](./doc/assets/img_3.png)
+> ![img_3.png](./doc/assets/img_3.png)
 3. 设置
-> ![img_1.png](./doc/assets/img_4.png)
+> ![img_4.png](./doc/assets/img_4.png)
 4. 抓包
-> ![img_2.png](./doc/assets/img_5.png)
+> ![img_5.png](./doc/assets/img_5.png)
 
 ## signature获取方法
 
 > 使用`cheat engine`附加小程序进程并按下图操作找到signature
 >
-> ![img.png](./doc/assets/img_7.png)
-> 
-> ![img.png](./doc/assets/img_3.png)
+> ![img.png](./doc/assets/img.png)
 >
-> ![img_1.png](./doc/assets/img_4.png)
+> ![img_1.png](./doc/assets/img_1.png)
 >
-> ![img_2.png](./doc/assets/img_5.png)
+> ![img_2.png](./doc/assets/img_2.png)
 
 ## cookie获取
 
