@@ -84,7 +84,7 @@ QHBoxLayout *MainWidget::createCateLayout() {
     oneCate->addItem("加载中...", 0);
     Http(BASE_URL)
             .param("act", "GetCat1")
-            .success([this](const QString &response, int code) {
+            .success([=](const QString &response, int code) {
                 try {
                     ResponseData<Cate> res;
                     xpack::json::decode(response.toStdString(), res);
@@ -98,7 +98,7 @@ QHBoxLayout *MainWidget::createCateLayout() {
                     logger(LogType::ERR, QString("【异常-一级分类】 %1").arg(e.what()));
                 }
             })
-            .fail([this](const QString &response, int code) {
+            .fail([=](const QString &response, int code) {
                 logger(LogType::ERR, QString("【一级分类】 %1  %2").arg(code).arg(response));
             })
             .get();
@@ -168,8 +168,6 @@ QGroupBox *MainWidget::createInfoLayout() {
     Idcard = new QLineEdit;
     Tel = new QLineEdit;
     Tel->setMaxLength(11);
-    Age = new QLineEdit;
-    Age->setMaxLength(2);
     Signature = new QLineEdit;
     Cookie = new QLineEdit;
 
@@ -186,7 +184,6 @@ QGroupBox *MainWidget::createInfoLayout() {
 
     formLayout->addRow("姓名", Name);
     formLayout->addRow("性别", sexLayout);
-    formLayout->addRow("年龄", Age);
     formLayout->addRow("身份证号码", Idcard);
     formLayout->addRow("电话", Tel);
     formLayout->setSpacing(10);
@@ -278,7 +275,6 @@ void MainWidget::refreshStorage() {
         } else {
             Girl->setChecked(true);
         }
-        Age->setText(QString::number(storage.age));
         Idcard->setText(storage.idcard);
         Tel->setText(storage.tel);
         Signature->setText(storage.signature);
@@ -292,7 +288,6 @@ void MainWidget::refreshStorage() {
         // 文件不存在则初始化
         storage.doctype = 1;
         storage.sex = 0;
-        storage.age = 0;
         storage.lat = 0;
         storage.lng = 0;
         file.write(xpack::json::encode(storage).c_str());
@@ -306,13 +301,13 @@ void MainWidget::refreshCate(int pid = 0) {
     Http(BASE_URL)
             .param("act", "GetCat2")
             .param("id", pid)
-            .success([this, &pid](const QString &response, int code) {
+            .success([=](const QString &response, int code) {
                 try {
                     ResponseData<Cate> res;
                     xpack::json::decode(response.toStdString(), res);
                     QList<Cate> cateList = res.list;
                     twoCate->clear();
-                    if (cateList.size() == 0) {
+                    if (cateList.empty()) {
                         twoCate->addItem("暂无数据", 0);
                     }
                     for (const auto &item: cateList) {
@@ -322,7 +317,7 @@ void MainWidget::refreshCate(int pid = 0) {
                     logger(LogType::ERR, QString("【异常-二级分类】 %1").arg(e.what()));
                 }
             })
-            .fail([this](const QString &response, int code) {
+            .fail([=](const QString &response, int code) {
                 logger(LogType::ERR, QString("【二级分类】 %1  %2").arg(code).arg(response));
             })
             .get();
@@ -345,7 +340,6 @@ void MainWidget::save() {
 
     storage.cname = Name->text();
     storage.sex = Sex->checkedButton()->text() == "男" ? 1 : 2;
-    storage.age = Age->text().toInt();
     // 证件类型固定为身份证
     storage.doctype = 1;
     storage.idcard = Idcard->text();
@@ -422,7 +416,7 @@ void MainWidget::fetchHospital() {
 
     Http(BASE_URL)
             .params(params)
-            .success([this](const QString &response, int code) {
+            .success([=](const QString &response, int code) {
                 try {
                     ResponseData<Hospital> res;
                     xpack::json::decode(response.toStdString(), res);
@@ -431,7 +425,7 @@ void MainWidget::fetchHospital() {
                     // 更新表格内容前，要断开与 cellChanged 信号关联的所有槽，否则会导致程序闪退
                     disconnect(hTableWidget, &QTableWidget::doubleClicked, 0, 0);
 
-                    if (hospitalList.size() == 0) {
+                    if (hospitalList.empty()) {
                         hTableWidget->setRowCount(1);
                         hTableWidget->setItem(0, 2, new QTableWidgetItem("暂无数据"));
                     } else {
@@ -456,7 +450,7 @@ void MainWidget::fetchHospital() {
                     logger(LogType::ERR, QString("【异常-医院列表】 %1").arg(e.what()));
                 }
             })
-            .fail([this](const QString &response, int code) {
+            .fail([=](const QString &response, int code) {
                 logger(LogType::ERR, QString("【医院列表】 %1  %2").arg(code).arg(response));
             })
             .get();
@@ -486,16 +480,16 @@ void MainWidget::fetchProduct() {
 
     Http(BASE_URL)
             .params(params)
-            .success([this](const QString &response, int code) {
+            .success([=](const QString &response, int code) {
                 try {
                     HospitalDetail res;
                     xpack::json::decode(response.toStdString(), res);
                     productList = res.list;
 
                     // 更新表格内容前，要断开与 cellChanged 信号关联的所有槽，否则会导致程序闪退
-                    disconnect(pTableWidget, &QTableWidget::doubleClicked, 0, 0);
+                    disconnect(pTableWidget, &QTableWidget::doubleClicked, nullptr, nullptr);
 
-                    if (productList.size() == 0) {
+                    if (productList.empty()) {
                         pTableWidget->setRowCount(1);
                         pTableWidget->setItem(0, 4, new QTableWidgetItem("暂无数据"));
                     } else {
@@ -532,7 +526,7 @@ void MainWidget::fetchProduct() {
                     logger(LogType::ERR, QString("【异常-产品列表】 %1").arg(e.what()));
                 }
             })
-            .fail([this](const QString &response, int code) {
+            .fail([=](const QString &response, int code) {
                 logger(LogType::ERR, QString("【产品列表】 %1  %2").arg(code).arg(response));
             })
             .get();
@@ -569,7 +563,7 @@ void MainWidget::toggleTimer() {
         timer->start(time * 1000);
     } else {
         logger(LogType::INFO, "秒杀已关闭");
-        disconnect(timer, &QTimer::timeout, this, 0);
+        disconnect(timer, &QTimer::timeout, this, nullptr);
         timer->stop();
     }
 }
@@ -634,7 +628,7 @@ void MainWidget::secKill() {
     // 获取可预约日期列表
     Http(BASE_URL)
             .params(params)
-            .success([this](const QString &response, int code) {
+            .success([=](const QString &response, int code) {
                 try {
                     if (response.contains("list")) {
                         ResponseData<SubDate> res;
@@ -642,7 +636,7 @@ void MainWidget::secKill() {
                         subDateList = res.list;
                         subDateIndex = 0;
 
-                        if (res.list.size()) {
+                        if (!res.list.empty()) {
                             getProductDetail();
                         } else {
                             logger(LogType::ERR, "【时间列表为空】");
@@ -654,7 +648,7 @@ void MainWidget::secKill() {
                     logger(LogType::ERR, QString("【异常-时间列表】 %1").arg(e.what()));
                 }
             })
-            .fail([this](const QString &response, int code) {
+            .fail([=](const QString &response, int code) {
                 logger(LogType::ERR, QString("【时间列表】 %1  %2").arg(code).arg(response));
             })
             .get();
@@ -691,7 +685,7 @@ void MainWidget::getProductDetail() {
     params["scdate"] = scdate;
     Http(BASE_URL)
             .params(params)
-            .success([this, &scdate](const QString &response, int code) {
+            .success([=](const QString &response, int code) {
                 try {
                     // 302则表示当天的疫苗已经没了
                     if (code == 302) {
@@ -708,7 +702,7 @@ void MainWidget::getProductDetail() {
                     ResponseData<DateDetail> res;
                     xpack::json::decode(rel, res);
 
-                    if (!res.list.size()) {
+                    if (res.list.empty()) {
                         logger(LogType::INFO, QString("【产品详情】 %1 预约已满").arg(scdate));
                         getProductDetail();
                         return;
@@ -720,14 +714,14 @@ void MainWidget::getProductDetail() {
                     logger(LogType::ERR, QString("【异常-产品详情】 %1").arg(e.what()));
                 }
             })
-            .fail([this](const QString &response, int code) {
+            .fail([=](const QString &response, int code) {
                 logger(LogType::ERR, QString("【预约时间详情】 %1  %2").arg(code).arg(response));
             })
             .get();
 }
 
 // 提交订单
-void MainWidget::postOrder(QString &mxid, QString &date) {
+void MainWidget::postOrder(QString &mxid, const QString& date) {
     OrderPost data;
     data.birthday = storage.birthday;
     data.tel = storage.tel;
@@ -737,7 +731,7 @@ void MainWidget::postOrder(QString &mxid, QString &date) {
     data.idcard = storage.idcard;
     data.mxid = mxid;
     data.date = date;
-    data.pid = pid;
+    data.pid = QString("%1").arg(pid);
     data.Ftime = Sub_Num->currentData().value<int>();
 
     // 加密
@@ -746,7 +740,7 @@ void MainWidget::postOrder(QString &mxid, QString &date) {
     QString rel = QString::fromStdString(CryptoUtil::encrypt(str, key.toLocal8Bit()));
     Http(POST_ORDER_URL)
             .json(rel)
-            .success([this](const QString &response, int code) {
+            .success([=](const QString &response, int code) {
                 try {
                     Response res;
                     xpack::json::decode(response.toStdString(), res);
@@ -760,7 +754,7 @@ void MainWidget::postOrder(QString &mxid, QString &date) {
                     logger(LogType::ERR, QString("【异常-提交订单】 %1").arg(e.what()));
                 }
             })
-            .fail([this](const QString &response, int code) {
+            .fail([=](const QString &response, int code) {
                 logger(LogType::ERR, QString("【提交订单】 %1  %2").arg(code).arg(response));
             })
             .post();

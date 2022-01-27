@@ -27,7 +27,7 @@ public:
     // 接种日期
     QString date;
     // 产品id
-    int pid;
+    QString pid;
     // 接种次数
     int Ftime;
     // 用户id

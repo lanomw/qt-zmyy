@@ -123,7 +123,7 @@ private:
     void getProductDetail();
 
     // 提交订单
-    void postOrder(QString &mxid, QString &date);
+    void postOrder(QString &mxid, const QString& date);
 
 private:
     int id;
@@ -143,7 +143,6 @@ private:
     /*----------------------- 输入控件 -------------------------*/
     QLineEdit *Name;
     QButtonGroup *Sex;
-    QLineEdit *Age;
     QLineEdit *Idcard;
     QLineEdit *Tel;
 
