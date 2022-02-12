@@ -13,4 +13,10 @@
 // 订单提交
 #define POST_ORDER_URL "https://cloud.cn2030.com/sc/api/User/OrderPost"
 
+enum LogType {
+    INFO,
+    WARN,
+    ERR
+};
+
 #endif //QT_ZMYY_CONFIG_H

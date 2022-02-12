@@ -20,14 +20,12 @@ find_package(Qt5 COMPONENTS
         REQUIRED)
 
 add_executable(qt_zmyy main.cpp
-        src/MainWidget.cpp
-        src/MainWidget.h
         src/Config.h
         src/model/Storage.h
         src/util/WeChatUtil.cpp
         src/util/WeChatUtil.h
-        src/AreaBox.cpp
-        src/AreaBox.h
+        src/ui/AreaBox.cpp
+        src/ui/AreaBox.h
         src/model/AreaCate.h
         src/model/Cate.h
         src/model/Template.h
@@ -36,10 +34,24 @@ add_executable(qt_zmyy main.cpp
         src/model/HospitalDetail.h
         src/model/NumbersVaccine.h
         src/model/SubDate.h
+        src/lib/QtAES/qaesencryption.cpp
+        src/lib/QtAES/qaesencryption.h
         src/lib/Base64.cpp
         src/lib/Base64.h
-        src/lib/AES.cpp
-        src/lib/AES.h src/lib/Hex.cpp src/lib/Hex.h src/util/CryptoUtil.cpp src/util/CryptoUtil.h src/model/DateDetail.h src/model/OrderPost.h src/util/Http.cpp src/util/Http.h)
+        src/lib/Hex.cpp
+        src/lib/Hex.h
+        src/util/CryptoUtil.cpp
+        src/util/CryptoUtil.h
+        src/model/DateDetail.h
+        src/model/OrderPost.h
+        src/util/Http.cpp
+        src/util/Http.h
+        src/ui/MainWidget.cpp
+        src/ui/MainWidget.h
+        src/service/MainService.cpp
+        src/service/MainService.h
+        src/lib/JWT.cpp
+        src/lib/JWT.h)
 target_link_libraries(qt_zmyy
         Qt5::Core
         Qt5::Gui

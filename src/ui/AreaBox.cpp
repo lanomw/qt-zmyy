@@ -114,11 +114,15 @@ void AreaBox::searchArea() {
 // 确定
 void AreaBox::confirmHandler() {
     QListWidgetItem *item = listWidget->currentItem();
+    if (!item) {
+        QMessageBox::warning(nullptr, "警告", "未选中地区");
+        return;
+    }
 
     QList<QString> arr = item->toolTip().split(",");
     double lng = arr[0].trimmed().toDouble();
     double lat = arr[1].trimmed().toDouble();
-
-    emit confirm(lat, lng, item->text());
+    QString cityName = item->text();
+    emit confirm(lat, lng, cityName);
     close();
 }

@@ -43,6 +43,9 @@ class HttpPrivate {
     // 执行请求
     static void exec(HttpPrivate *d, HttpMethod method);
 
+    // 执行请求
+    static HttpResponse execSync(HttpPrivate *d, HttpMethod method);
+
     // 读取响应数据
     static QString readReply(QNetworkReply *reply, const QString &charset = "UTF-8");
 
@@ -161,7 +164,8 @@ void HttpPrivate::exec(HttpPrivate *d, HttpMethod method) {
 
     // 4. 请求结束时一次性获取响应数据，在 handleFinish 中执行回调函数
     QObject::connect(reply, &QNetworkReply::finished, [=] {
-        // 保存返回的cookie
+        // 加密key从cookie中获取，这里不再进行保存cookie，防止key更改
+        // 保存返回的cookie。返回的cookie携带有新的内容，加密key未变动，不影响数据加解密
         if (reply->hasRawHeader("Set-Cookie")) {
             COOKIE = reply->rawHeader("Set-Cookie");
         }
@@ -169,6 +173,61 @@ void HttpPrivate::exec(HttpPrivate *d, HttpMethod method) {
         QString failMessage = reply->errorString();
         HttpPrivate::handleFinish(cache, reply, successMessage, failMessage);
     });
+}
+
+HttpResponse HttpPrivate::execSync(HttpPrivate *d, HttpMethod method) {
+    // 1. 缓存需要的变量，在 lambda 中使用 = 捕获进行值传递 (不能使用引用 &，因为 d 已经被析构)
+    HttpCache cache = d->cache();
+
+    // 2. 创建请求需要的变量
+    QNetworkRequest request = createRequest(d, method);
+    QNetworkReply *reply = nullptr;
+
+    // 3. 根据 method 执行不同的请求
+    switch (method) {
+        case HttpMethod::GET:
+            reply = cache.manager->get(request);
+            break;
+        case HttpMethod::POST:
+            reply = cache.manager->post(request, d->useJson ? d->json.toUtf8() : d->params.toString(
+                    QUrl::FullyEncoded).toUtf8());
+            break;
+        case HttpMethod::PUT:
+            reply = cache.manager->put(request, d->useJson ? d->json.toUtf8() : d->params.toString(
+                    QUrl::FullyEncoded).toUtf8());
+            break;
+        case HttpMethod::DELETE:
+            reply = cache.manager->deleteResource(request);
+            break;
+        default:
+            break;
+    }
+
+    // 4. 请求结束时一次性获取响应数据，在 handleFinish 中执行回调函数
+    QEventLoop eventLoop;
+    QObject::connect(reply, &QNetworkReply::finished, &eventLoop, &QEventLoop::quit);
+    eventLoop.exec(QEventLoop::ExcludeUserInputEvents);
+
+    // 加密key从cookie中获取，这里不再进行保存cookie，防止key更改
+    // 保存返回的cookie。返回的cookie携带有新的内容，加密key未变动，不影响数据加解密
+    if (reply->hasRawHeader("Set-Cookie")) {
+        COOKIE = reply->rawHeader("Set-Cookie");
+    }
+
+    // 返回数据组装
+    HttpResponse response;
+    response.isSuccess = reply->error() == QNetworkReply::NoError;
+    response.status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    response.success = HttpPrivate::readReply(reply, cache.charset.toUtf8());
+    response.fail = reply->errorString();
+
+    // 3. 释放 reply 和 manager 对象
+    reply->deleteLater();
+    if (cache.manager != nullptr) {
+        cache.manager->deleteLater();
+    }
+
+    return response;
 }
 
 QString HttpPrivate::readReply(QNetworkReply *reply, const QString &charset) {
@@ -198,11 +257,8 @@ void HttpPrivate::handleFinish(HttpCache cache, QNetworkReply *reply, const QStr
     }
 
     // 3. 释放 reply 和 manager 对象
-    if (nullptr != reply) {
-        reply->deleteLater();
-    }
-
-    if (nullptr != cache.manager) {
+    reply->deleteLater();
+    if (cache.manager != nullptr) {
         cache.manager->deleteLater();
     }
 }
@@ -239,7 +295,7 @@ Http &Http::header(const QString &name, const QString &value) {
     return *this;
 }
 
-Http &Http::headers(const QMap<QString, QString> nameValues) {
+Http &Http::headers(const QMap<QString, QString> &nameValues) {
     for (auto i = nameValues.cbegin(); i != nameValues.cend(); ++i) {
         d->headers[i.key()] = i.value();
     }
@@ -281,4 +337,20 @@ void Http::put() {
 
 void Http::remove() {
     HttpPrivate::exec(d, HttpMethod::DELETE);
+}
+
+HttpResponse Http::getSync() {
+    return HttpPrivate::execSync(d, HttpMethod::GET);
+}
+
+HttpResponse Http::postSync() {
+    return HttpPrivate::execSync(d, HttpMethod::POST);
+}
+
+HttpResponse Http::putSync() {
+    return HttpPrivate::execSync(d, HttpMethod::PUT);
+}
+
+HttpResponse Http::removeSync() {
+    return HttpPrivate::execSync(d, HttpMethod::DELETE);
 }

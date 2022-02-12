@@ -9,6 +9,7 @@
 #include <QString>
 #include <QHash>
 #include <QUrlQuery>
+#include <QEventLoop>
 #include <QCryptographicHash>
 #include <QtNetwork/QHttpPart>
 #include <QtNetwork/QHttpMultiPart>
@@ -16,7 +17,19 @@
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkAccessManager>
 
+#include "../lib/xpack/json.h"
+
 class HttpPrivate;
+
+class HttpResponse {
+public:
+    int status = 200; // 状态码
+    bool isSuccess = true; // 请求是否成功
+    QString success; // 请求成功返回内容
+    QString fail; // 请求失败返回内容
+
+    XPACK(O(status, success, fail));
+};
 
 class Http {
 public:
@@ -37,7 +50,7 @@ public:
     Http &header(const QString &name, const QString &value);
 
     // 添加多个请求头
-    Http &headers(const QMap<QString, QString> nameValues);
+    Http &headers(const QMap<QString, QString>& nameValues);
 
     // 字符集，默认使用 UTF-8
     Http &charset(const QString &cs);
@@ -63,6 +76,19 @@ public:
     // 执行 DELETE 请求，由于 delete 是 C++ 的运算符，所以用同义词 remove
     // 注意: Qt 提供的 DELETE 请求是不支持传递参数的，请参考 QNetworkAccessManager::deleteResource(const QNetworkRequest &request)
     void remove();
+
+    // 同步执行 GET 请求。不需要给success/fail处理函数
+    HttpResponse getSync();
+
+    // 同步执行 POST 请求。不需要给success/fail处理函数
+    HttpResponse postSync();
+
+    // 同步执行 PUT 请求。不需要给success/fail处理函数
+    HttpResponse putSync();
+
+    // 同步执行 DELETE 请求。不需要给success/fail处理函数。由于 delete 是 C++ 的运算符，所以用同义词 remove
+    // 注意: Qt 提供的 DELETE 请求是不支持传递参数的，请参考 QNetworkAccessManager::deleteResource(const QNetworkRequest &request)
+    HttpResponse removeSync();
 
 private:
     HttpPrivate *d;

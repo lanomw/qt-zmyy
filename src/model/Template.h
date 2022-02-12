@@ -16,7 +16,7 @@ public:
     QString msg;
     bool ignore;
 
-XPACK(O(status, msg));
+XPACK(O(status, msg, ignore));
 };
 
 // http响应结构

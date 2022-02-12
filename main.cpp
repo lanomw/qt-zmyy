@@ -1,6 +1,6 @@
 #include <QApplication>
 #include <QStyleFactory>
-#include "src/MainWidget.h"
+#include "src/ui/MainWidget.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);

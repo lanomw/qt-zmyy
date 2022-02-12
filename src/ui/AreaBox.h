@@ -17,14 +17,16 @@
 #include <QButtonGroup>
 #include <QComboBox>
 #include <QPushButton>
-#include <QFile>
 #include <QCoreApplication>
-#include <QByteArray>
 #include <QMessageBox>
+
+#include <QFile>
+#include <QByteArray>
 #include <QString>
-#include "Config.h"
-#include "lib/xpack/json.h"
-#include "model/AreaCate.h"
+
+#include "../Config.h"
+#include "../lib/xpack/json.h"
+#include "../model/AreaCate.h"
 
 using namespace std;
 

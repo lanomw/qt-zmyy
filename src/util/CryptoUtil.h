@@ -5,31 +5,36 @@
 #ifndef QT_ZMYY_CRYPTOUTIL_H
 #define QT_ZMYY_CRYPTOUTIL_H
 
-#include <iostream>
-#include <sstream>
-#include "../lib/AES.h"
+#include <QDebug>
+#include <QRegExp>
+#include <QString>
+#include <QByteArray>
+
 #include "../lib/Hex.h"
 #include "../lib/Base64.h"
+#include "../lib/QtAES/qaesencryption.h"
 
 using namespace std;
+
+static const QByteArray iv = "1234567890000000";
 
 class CryptoUtil {
 public:
     /**
      * 加密
-     * @param strSrc - 明文
-     * @param pKey  - 密钥
+     * @param str - 明文
+     * @param key  - 密钥
      * @return
      */
-    static string encrypt(const string &strSrc, const char *pKey);
+    static QString encrypt(const QString &str, const QString &key);
 
     /**
      * 解密
-     * @param strSrc - 密文
-     * @param pKey  - 密钥
+     * @param str - 密文
+     * @param key  - 密钥
      * @return
      */
-    static string decrypt(const string &strSrc, const char *pKey);
+    static QString decrypt(const QString &str, const QString &key);
 };
 
 
