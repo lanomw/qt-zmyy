@@ -15,13 +15,11 @@
 | path | string | /                                |
 
 
-### 点击预约时的接口调用顺序
+### 预约接口调用顺序
 1. 获取预约时间的数据，需要解密: /sc/wx/HandlerSubscribe.ashx?act=GetCustSubscribeDateDetail
 2. 获取验证码:/sc/wx/HandlerSubscribe.ashx?act=GetCaptcha
+    > 会返回新的cookie，含有新的信息，不影响加解密。之后的请求需要使用
 3. 提交预约信息，需要加密: /sc/api/User/OrderPost
-4. 查询预约。可能返回408需要重新授权：/sc/wx/HandlerSubscribe.ashx?act=GetOrderStatus
-5. 重新授权：/sc/wx/HandlerSubscribe.ashx
-4. 查询预约。可能返回408需要重新授权：/sc/wx/HandlerSubscribe.ashx?act=GetOrderStatus
 
 ### 获取授权
 > POST /sc/wx/HandlerSubscribe.ashx?act=auth&code=
