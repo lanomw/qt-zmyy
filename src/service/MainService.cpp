@@ -178,8 +178,7 @@ void MainService::enableTask(int p_id, const QDateTime &dateTime, int f_ime) {
     // 测试期间代码
     int time = 0;
     if (!isStart) {
-        QDateTime curDateTime = QDateTime::currentDateTime();
-        time = curDateTime.secsTo(dateTime);
+        time = QDateTime::currentDateTime().msecsTo(dateTime);
         if (time <= 0) {
             QMessageBox::warning(nullptr, "警告", "无效时间");
             emit logger(LogType::INFO, "无效时间");
@@ -191,13 +190,15 @@ void MainService::enableTask(int p_id, const QDateTime &dateTime, int f_ime) {
     stopSecKill = isStart;
     isStart = !isStart;
     emit widgetDisable(isStart);
-    timer = new QTimer();
-    timer->setSingleShot(true);
 
     if (isStart) {
-        emit logger(LogType::INFO, QString("%1秒后开始秒杀").arg(time));
+        emit logger(LogType::INFO, QString("%1秒后开始秒杀").arg(time / 1000));
+        timer = new QTimer();
+        timer->setTimerType(Qt::TimerType::PreciseTimer);
+        timer->setSingleShot(true);
         connect(timer, &QTimer::timeout, this, &MainService::secKill);
-        timer->start(time * 1000);
+        // 获取新的时间
+        timer->start(QDateTime::currentDateTime().msecsTo(dateTime));
     } else {
         emit logger(LogType::INFO, "秒杀已关闭");
         disconnect(timer, &QTimer::timeout, this, nullptr);
