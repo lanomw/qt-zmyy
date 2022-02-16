@@ -396,7 +396,7 @@ bool MainService::postOrder(QString &mxid, const QString &date) {
         if (res.status == 200) {
             emit logger(LogType::INFO, QString("【提交订单 成功】 %1").arg(res.msg));
             return true;
-        } else if (res.status == 203) {
+        } else if (res.status == 203 || res.status == 201) {
             // 参数校验失败
             emit logger(LogType::INFO, QString("【提交订单 失败】 %1").arg(res.msg));
             return true;
