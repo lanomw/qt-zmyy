@@ -7,6 +7,9 @@
 
 #include <QList>
 #include <QString>
+
+#include "User.h"
+
 #include "../lib/xpack/json.h"
 
 // http响应结构
@@ -26,6 +29,15 @@ public:
     QList<T> list;
 
     XPACK(O(list));
+};
+
+class UserResponse {
+public:
+    int status = 200;
+    QString msg;
+    User user;
+
+XPACK(O(status, msg, user));
 };
 
 #endif //QT_ZMYY_TEMPLATE_H

@@ -16,6 +16,7 @@
 #include <QString>
 #include <QList>
 #include <QVariant>
+#include <QNetworkAccessManager>
 
 #include "../Config.h"
 #include "../util/Http.h"
@@ -68,11 +69,14 @@ public slots:
     // 获取Storage数据
     void getStorage();
 
-    // 保存Storage数据
-    void saveStorage(const QString &name, int sex, const QString &idcard, const QString &tel, const QString &cookie);
+    // 设置cookie
+    void setCookie(const QString &cookie);
 
     // 保存Storage数据
     void saveStorageByCity(double lat, double lng, const QString &cityName);
+
+    // 获取用户信息
+    void getUser();
 
     // 定时任务
     void enableTask(int p_id, const QDateTime &dateTime, int f_ime);
@@ -102,8 +106,10 @@ signals:
     void renderCate(const QList<Cate> list, bool isOne);
 
     // 渲染Storage数据
-    void renderStorage(const QString &cityName, const QString &name, int sex, const QString &idcard, const QString &tel,
-                       const QString &cookie, const QString &signature);
+    void renderStorage(const QString &cityName, const QString &cookie, const QString &signature);
+
+    // 渲染用户信息
+    void renderUser(const QString &name, int sex, const QString &idcard, const QString &tel);
 
 
 private:
@@ -112,8 +118,11 @@ private:
     int fTime = 0; // 订阅针次
     bool isStart = false;
     bool stopSecKill = false; // 是否停止秒杀
+    int timerCount = 0; // 延时次数。防止请求次数过多被限流
     QTimer *timer;
+    User user;
     Storage storage;
+    QNetworkAccessManager *manager = nullptr;
 };
 
 

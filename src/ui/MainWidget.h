@@ -52,8 +52,10 @@ private slots:
     void renderCate(const QList<Cate> &list, bool isOne);
 
     // 渲染Storage数据
-    void renderStorage(const QString &cityName, const QString &name, int sex, const QString &idcard, const QString &tel,
-                       const QString &cookie, const QString &signature);
+    void renderStorage(const QString &cityName, const QString &cookie, const QString &signature);
+
+    // 渲染用户信息
+    void renderUser(const QString &name, int sex, const QString &idcard, const QString &tel);
 
     // 禁用
     void widgetDisable(bool enable);
@@ -69,13 +71,10 @@ private:
 
 
     /*----------------------- 用户信息-控件 -------------------------*/
-    QLineEdit *Name; // 姓名
-    QButtonGroup *Sex; // 性别
-    QLineEdit *Idcard; // 身份证号码
-    QLineEdit *Tel; // 电话
-
-    QRadioButton *Boy; // 性别-男
-    QRadioButton *Girl; // 性别-女
+    QLabel *Name; // 姓名
+    QLabel *Sex; // 性别
+    QLabel *Idcard; // 身份证号码
+    QLabel *Tel; // 电话
     QLineEdit *Cookie; // cookie
     QLineEdit *Signature; // 签名
 
@@ -97,6 +96,7 @@ private:
     QComboBox *twoCate; // 二级分类控件
     QPushButton *cateConfirm; // 分类确定按钮
     QPushButton *saveBtn; // 保存按钮
+    QPushButton *getUserBtn; // 刷新用户信息按钮
     QPushButton *logBtn; // 日志显示/隐藏按钮
     QPushButton *subBtn; // 定时预约按钮
 
@@ -121,8 +121,11 @@ private:
     // 产品
     QGroupBox *createProductLayout();
 
-    // 资料填写
+    // 用户信息
     QGroupBox *createInfoLayout();
+
+    // Cookie填写
+    QGroupBox *createCookieLayout();
 
     // 预约产品
     QGroupBox *createSubLayout();

@@ -11,19 +11,6 @@
 
 class Storage {
 public:
-    // 姓名
-    QString cname;
-    // 性别。1: 男; 2: 女
-    int sex;
-    // 证件类型。1:身份证,2:护照;3:港澳证件;4:台胞证
-    int doctype;
-    // 证件号码
-    QString idcard;
-    // 出生日期
-    QString birthday;
-    // 电话
-    QString tel;
-
     // 当前城市
     QString cityName;
     double lat;
@@ -34,7 +21,7 @@ public:
     // cookie
     QString cookie;
 
-    XPACK(O(cname, sex, doctype, idcard, birthday, tel, cityName, lat, lng, signature, cookie));
+    XPACK(O(cityName, lat, lng, signature, cookie));
 };
 
 

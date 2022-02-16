@@ -18,8 +18,9 @@ MainWidget::MainWidget() {
 
     // 右边
     QVBoxLayout *rightLayout = new QVBoxLayout;
-    rightLayout->addWidget(createInfoLayout(), 2);
-    rightLayout->addWidget(createSubLayout(), 1);
+    rightLayout->addWidget(createInfoLayout(), 1);
+    rightLayout->addWidget(createCookieLayout(), 1);
+    rightLayout->addWidget(createSubLayout(), 2);
 
     // 最外层容器
     QHBoxLayout *container = new QHBoxLayout(this);
@@ -33,6 +34,7 @@ MainWidget::MainWidget() {
     connect(&mainService, &MainService::renderHospital, this, &MainWidget::renderHospital);
     connect(&mainService, &MainService::renderProduct, this, &MainWidget::renderProduct);
     connect(&mainService, &MainService::renderStorage, this, &MainWidget::renderStorage);
+    connect(&mainService, &MainService::renderUser, this, &MainWidget::renderUser);
 
     logger(LogType::INFO, "========== 主界面构建完成 ==========");
 
@@ -110,8 +112,8 @@ QHBoxLayout *MainWidget::createCateLayout() {
 QGroupBox *MainWidget::createHospitalLayout() {
     hTableWidget = new QTableWidget;
     hTableWidget->setShowGrid(false);
-    hTableWidget->setColumnCount(4);
-    hTableWidget->setHorizontalHeaderLabels(QStringList() << "ID" << "医院名称" << "地址" << "联系电话");
+    hTableWidget->setColumnCount(5);
+    hTableWidget->setHorizontalHeaderLabels(QStringList() << "ID" << "医院名称" << "地址" << "联系电话" << "通知");
     QHeaderView *headerView = hTableWidget->horizontalHeader();
     headerView->setSectionResizeMode(QHeaderView::Stretch);
     headerView->setSectionResizeMode(0, QHeaderView::Custom);
@@ -121,7 +123,7 @@ QGroupBox *MainWidget::createHospitalLayout() {
     hTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     hTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
     hTableWidget->setRowCount(1);
-    hTableWidget->setItem(0, 2, new QTableWidgetItem("暂无数据"));
+    hTableWidget->setItem(0, 3, new QTableWidgetItem("暂无数据"));
 
     QGroupBox *box = new QGroupBox("医院列表");
     QHBoxLayout *qhBoxLayout = new QHBoxLayout;
@@ -137,7 +139,7 @@ QGroupBox *MainWidget::createProductLayout() {
     pTableWidget->setShowGrid(false);
     pTableWidget->setColumnCount(8);
     pTableWidget->setHorizontalHeaderLabels(
-            QStringList() << "ID" << "名称" << "价格" << "警告" << "标签" << "次数" << "状态" << "备注");
+            QStringList() << "ID" << "名称" << "价格/针次" << "警告" << "标签" << "预约时间" << "状态" << "备注");
     QHeaderView *headerView = pTableWidget->horizontalHeader();
     headerView->setSectionResizeMode(QHeaderView::Stretch);
     headerView->setSectionResizeMode(0, QHeaderView::Custom);
@@ -155,58 +157,62 @@ QGroupBox *MainWidget::createProductLayout() {
     return box;
 }
 
-// 资料填写
+// 用户信息
 QGroupBox *MainWidget::createInfoLayout() {
-    QGroupBox *box = new QGroupBox("资料");
+    QGroupBox *box = new QGroupBox("用户信息");
     box->setFixedWidth(260);
     QVBoxLayout *vBoxLayout = new QVBoxLayout;
 
-    QFormLayout *formLayout = new QFormLayout;
-    formLayout->setRowWrapPolicy(QFormLayout::WrapAllRows);
-    Name = new QLineEdit;
-    Idcard = new QLineEdit;
-    Tel = new QLineEdit;
-    Tel->setMaxLength(11);
+    Name = new QLabel;
+    Sex = new QLabel;
+    Idcard = new QLabel;
+    Tel = new QLabel;
+    getUserBtn = new QPushButton("刷新用户信息");
+
+    QFormLayout *formLayoutTop = new QFormLayout;
+    formLayoutTop->addRow("姓名", Name);
+    formLayoutTop->addRow("性别", Sex);
+    formLayoutTop->addRow("身份证号码", Idcard);
+    formLayoutTop->addRow("电话", Tel);
+
+    vBoxLayout->addLayout(formLayoutTop);
+    vBoxLayout->addWidget(getUserBtn);
+
+    box->setLayout(vBoxLayout);
+
+    // 刷新用户信息
+    connect(getUserBtn, &QPushButton::clicked, this, [this] {
+        mainService.getUser();
+    });
+
+    return box;
+}
+
+// Cookie填写
+QGroupBox *MainWidget::createCookieLayout() {
+    QGroupBox *box = new QGroupBox("Cookie填写");
+    box->setFixedWidth(260);
+    QVBoxLayout *vBoxLayout = new QVBoxLayout;
+
     Cookie = new QLineEdit;
     Signature = new QLineEdit;
     Signature->setReadOnly(true);
     Signature->setStyleSheet("QLineEdit {color: #777;outline:none;}");
+    saveBtn = new QPushButton("设置cookie");
 
-    // 单选按钮组
-    Sex = new QButtonGroup(this);
-    Boy = new QRadioButton("男");
-    Girl = new QRadioButton("女");
-    Sex->addButton(Boy, 1);
-    Sex->addButton(Girl, 2);
-    QHBoxLayout *sexLayout = new QHBoxLayout;
-    sexLayout->setAlignment(Qt::AlignLeft);
-    sexLayout->addWidget(Boy);
-    sexLayout->addWidget(Girl);
+    QFormLayout *formLayoutTop = new QFormLayout;
+    formLayoutTop->setRowWrapPolicy(QFormLayout::WrapAllRows);
+    formLayoutTop->addRow("cookie", Cookie);
+    formLayoutTop->addRow("cookie解析到的signature", Signature);
 
-    formLayout->addRow("姓名", Name);
-    formLayout->addRow("性别", sexLayout);
-    formLayout->addRow("身份证号码", Idcard);
-    formLayout->addRow("电话", Tel);
-    formLayout->setSpacing(10);
-    formLayout->addRow("cookie", Cookie);
-    formLayout->addRow("cookie解析到的signature", Signature);
-
-    saveBtn = new QPushButton("保存");
-
-    vBoxLayout->addLayout(formLayout);
+    vBoxLayout->addLayout(formLayoutTop);
     vBoxLayout->addWidget(saveBtn);
 
     box->setLayout(vBoxLayout);
 
     // 保存信息
     connect(saveBtn, &QPushButton::clicked, this, [this] {
-        QString cname = Name->text();
-        int sex = Sex->checkedButton()->text() == "男" ? 1 : 2;
-        QString idcard = Idcard->text();
-        QString tel = Tel->text();
-        QString cookie = Cookie->text();
-
-        mainService.saveStorage(cname, sex, idcard, tel, cookie);
+        mainService.setCookie(Cookie->text());
     });
 
     return box;
@@ -307,7 +313,7 @@ void MainWidget::renderHospital(const QList<Hospital> &list) {
 
     if (list.empty()) {
         hTableWidget->setRowCount(1);
-        hTableWidget->setItem(0, 2, new QTableWidgetItem("暂无数据"));
+        hTableWidget->setItem(0, 3, new QTableWidgetItem("暂无数据"));
     } else {
         hTableWidget->setRowCount(0);
     }
@@ -322,6 +328,9 @@ void MainWidget::renderHospital(const QList<Hospital> &list) {
         addr->setToolTip(item.addr);
         hTableWidget->setItem(hTableWidget->rowCount() - 1, 2, addr);
         hTableWidget->setItem(hTableWidget->rowCount() - 1, 3, new QTableWidgetItem(item.tel));
+        QTableWidgetItem *notice = new QTableWidgetItem(item.notice);
+        notice->setToolTip(item.notice);
+        hTableWidget->setItem(hTableWidget->rowCount() - 1, 4, notice);
     }
 
     // 完成表格更新后，重新关联 cellChanged 相关的槽
@@ -364,7 +373,8 @@ void MainWidget::renderProduct(const QList<Product> &list) {
         text->setToolTip(item.text);
         pTableWidget->setItem(pTableWidget->rowCount() - 1, 1, text);
         pTableWidget->setItem(pTableWidget->rowCount() - 1, 2,
-                              new QTableWidgetItem(item.price + "元/针次"));
+                              new QTableWidgetItem(
+                                      QString("%1元 / %2针").arg(item.price).arg(item.NumbersVaccine.length())));
         QTableWidgetItem *warn = new QTableWidgetItem(item.warn);
         warn->setToolTip(item.warn);
         pTableWidget->setItem(pTableWidget->rowCount() - 1, 3, warn);
@@ -372,9 +382,9 @@ void MainWidget::renderProduct(const QList<Product> &list) {
         tags->setToolTip(item.tags.join("、"));
         pTableWidget->setItem(pTableWidget->rowCount() - 1, 4, tags);
         pTableWidget->setItem(pTableWidget->rowCount() - 1, 5,
-                              new QTableWidgetItem(QString::number(item.NumbersVaccine.size())));
+                              new QTableWidgetItem(item.date));
         pTableWidget->setItem(pTableWidget->rowCount() - 1, 6,
-                              new QTableWidgetItem(item.enable ? "已开启" : "未开启"));
+                              new QTableWidgetItem(item.enable ? "可预约" : "暂未开启"));
         QTableWidgetItem *remarks = new QTableWidgetItem(item.remarks);
         remarks->setToolTip(item.remarks);
         pTableWidget->setItem(pTableWidget->rowCount() - 1, 7, remarks);
@@ -419,23 +429,19 @@ void MainWidget::renderCate(const QList<Cate> &list, bool isOne) {
 }
 
 // 渲染Storage数据
-void MainWidget::renderStorage(const QString &cityName, const QString &name, int sex, const QString &idcard,
-                               const QString &tel, const QString &cookie, const QString &signature) {
-    Name->setText(name);
-    if (sex == 1) {
-        Boy->setChecked(true);
-    } else {
-        Girl->setChecked(true);
-    }
-    Idcard->setText(idcard);
-    Tel->setText(tel);
+void MainWidget::renderStorage(const QString &cityName, const QString &cookie, const QString &signature) {
     Signature->setText(signature);
     Cookie->setText(cookie);
 
     chooseArea->setText(cityName.isEmpty() ? "未选择地区" : cityName);
-    if (!cityName.isEmpty()) {
-        mainService.fetchHospital(0);
-    }
+}
+
+// 渲染用户信息
+void MainWidget::renderUser(const QString &name, int sex, const QString &idcard, const QString &tel) {
+    Name->setText(name);
+    Sex->setText(sex == 1 ? "男" : "女");
+    Idcard->setText(idcard);
+    Tel->setText(tel);
 }
 
 // 启用/禁用控件

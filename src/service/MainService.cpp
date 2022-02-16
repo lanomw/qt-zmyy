@@ -8,6 +8,9 @@ MainService::MainService() {
 }
 
 MainService::~MainService() {
+    timer = nullptr;
+    manager->deleteLater();
+    manager = nullptr;
 }
 
 // 获取分类
@@ -104,16 +107,16 @@ void MainService::getStorage() {
     QString str = file.readAll();
     if (!str.isEmpty()) {
         xpack::json::decode(str.toStdString(), storage);
-        emit renderStorage(storage.cityName.isEmpty() ? "未选择地区" : storage.cityName, storage.cname, storage.sex,
-                           storage.idcard, storage.tel, storage.cookie, storage.signature);
-        Http::setCookie(storage.cookie);
+        emit renderStorage(storage.cityName.isEmpty() ? "未选择地区" : storage.cityName, storage.cookie, storage.signature);
+        if (!storage.cookie.isEmpty()) {
+            Http::setCookie(storage.cookie);
+            getUser();
+        }
         if (!storage.cityName.isEmpty()) {
             fetchHospital();
         }
     } else {
         // 文件不存在则初始化
-        storage.doctype = 1;
-        storage.sex = 0;
         storage.lat = 0;
         storage.lng = 0;
         file.write(xpack::json::encode(storage).c_str());
@@ -122,35 +125,20 @@ void MainService::getStorage() {
     file.close();
 }
 
-// 保存Storage数据
-void
-MainService::saveStorage(const QString &name, int sex, const QString &idcard, const QString &tel,
-                         const QString &cookie) {
+// 设置cookie
+void MainService::setCookie(const QString &cookie) {
     QFile file(storage_file);
     file.open(QFile::WriteOnly);
-
-    storage.cname = name;
-    storage.sex = sex;
-    // 证件类型固定为身份证
-    storage.doctype = 1;
-    storage.idcard = idcard;
-    QString year = idcard.mid(6, 4);
-    QString month = idcard.mid(10, 2);
-    QString day = idcard.mid(12, 2);
-    storage.birthday = QString("%1-%2-%3").arg(year).arg(month).arg(day);
-    storage.tel = tel;
     storage.cookie = cookie;
     // 根据jwt获取签名key
     JWTData jwtData = JWT::parse(cookie);
     storage.signature = jwtData.signature;
-
     Http::setCookie(cookie);
-
     file.write(xpack::json::encode(storage).c_str());
     file.close();
 
-    emit renderStorage(storage.cityName.isEmpty() ? "未选择地区" : storage.cityName, storage.cname, storage.sex,
-                       storage.idcard, storage.tel, storage.cookie, storage.signature);
+    emit renderStorage(storage.cityName.isEmpty() ? "未选择地区" : storage.cityName, storage.cookie, storage.signature);
+    getUser();
 }
 
 // 保存Storage数据
@@ -164,6 +152,35 @@ void MainService::saveStorageByCity(double lat, double lng, const QString &cityN
 
     file.write(xpack::json::encode(storage).c_str());
     file.close();
+}
+
+// 获取用户信息
+void MainService::getUser() {
+    HttpResponse httpResponse = Http(BASE_URL).param("act", "User").getSync();
+    if (httpResponse.isSuccess) {
+        UserResponse res;
+        xpack::json::decode(httpResponse.success.toStdString(), res);
+        if (res.status == 200) {
+            emit logger(LogType::INFO, QString("【获取用户信息 成功】 %1").arg(res.msg));
+            user.birthday = res.user.birthday;
+            user.tel = res.user.tel;
+            user.sex = res.user.sex;
+            user.cname = res.user.cname;
+            user.doctype = res.user.doctype;
+            user.idcard = res.user.idcard;
+
+            QFile file(storage_file);
+            file.open(QFile::WriteOnly);
+            file.write(xpack::json::encode(storage).c_str());
+            file.close();
+
+            emit renderUser(user.cname, user.sex, user.idcard, user.tel);
+        } else {
+            emit logger(LogType::ERR, QString("【获取用户信息】 Cookie已过期"));
+        }
+    } else {
+        emit logger(LogType::ERR, QString("【获取用户信息】 %1  %2").arg(httpResponse.status).arg(httpResponse.fail));
+    }
 }
 
 // 定时任务
@@ -193,12 +210,13 @@ void MainService::enableTask(int p_id, const QDateTime &dateTime, int f_ime) {
 
     if (isStart) {
         emit logger(LogType::INFO, QString("%1秒后开始秒杀").arg(time / 1000));
+        timerCount = 0;
         timer = new QTimer();
         timer->setTimerType(Qt::TimerType::PreciseTimer);
         timer->setSingleShot(true);
         connect(timer, &QTimer::timeout, this, &MainService::secKill);
-        // 获取新的时间
-        timer->start(QDateTime::currentDateTime().msecsTo(dateTime));
+        // 获取新的时间。多延迟300毫秒
+        timer->start(QDateTime::currentDateTime().msecsTo(dateTime) + 200);
     } else {
         emit logger(LogType::INFO, "秒杀已关闭");
         disconnect(timer, &QTimer::timeout, this, nullptr);
@@ -206,9 +224,12 @@ void MainService::enableTask(int p_id, const QDateTime &dateTime, int f_ime) {
     }
 }
 
-// 秒杀
+// 秒杀。使用同一个QNetworkAccessManager，避免额外资源开销
 void MainService::secKill() {
     emit logger(LogType::INFO, "【----- 秒杀开始 -----】");
+    if (!manager) {
+        manager = new QNetworkAccessManager();
+    }
 
     QMap<QString, QVariant> params;
     params["act"] = "GetCustSubscribeDateAll";
@@ -218,6 +239,7 @@ void MainService::secKill() {
 
     // 获取可预约日期列表
     Http(BASE_URL)
+            .manager(manager)
             .params(params)
             .success([=](const QString &response, int code) {
                 try {
@@ -230,7 +252,15 @@ void MainService::secKill() {
                             emit logger(LogType::ERR, "【时间列表为空】");
                         }
                     } else {
-                        emit logger(LogType::ERR, "【时间列表不存在】");
+                        if (!stopSecKill && timerCount < 50) { // 根据下面延时时间进行相应调整
+                            emit logger(LogType::ERR, "【时间列表不存在，延迟300ms】");
+                            // 重新设置定时器
+                            timer = new QTimer();
+                            timer->setTimerType(Qt::TimerType::PreciseTimer);
+                            timer->setSingleShot(true);
+                            connect(timer, &QTimer::timeout, this, &MainService::secKill);
+                            timer->start(300);
+                        }
                     }
                 } catch (const exception &e) {
                     emit logger(LogType::ERR, QString("【异常-时间列表】 %1").arg(e.what()));
@@ -259,17 +289,18 @@ void MainService::getProductDetail(QList<SubDate> subDateList) {
     params["pid"] = pid;
 
     for (int i = 0; i < subDateList.length(); ++i) {
-        emit logger(LogType::INFO, QString("【预约时间详情 请求：】 %1").arg(i + 1));
         if (stopSecKill) {
             return;
         }
         SubDate subDate = subDateList[i];
         if (!subDate.enable) {
+            emit logger(LogType::INFO, QString("【%1 暂未开启：】 %2").arg(i + 1).arg(subDate.date));
             continue;
         }
+        emit logger(LogType::INFO, QString("【%1 可预约：】 %2").arg(i + 1).arg(subDate.date));
 
         params["scdate"] = subDate.date;
-        HttpResponse httpResponse = Http(BASE_URL).params(params).getSync();
+        HttpResponse httpResponse = Http(BASE_URL).manager(manager).params(params).getSync();
         if (httpResponse.isSuccess) {
             try {
                 // 302则表示当天的疫苗已经没了
@@ -317,7 +348,7 @@ bool MainService::ignoreCaptcha(QString &mxid) {
     params["act"] = "GetCaptcha";
     params["mxid"] = mxid;
 
-    HttpResponse httpResponse = Http(BASE_URL).params(params).getSync();
+    HttpResponse httpResponse = Http(BASE_URL).manager(manager).params(params).getSync();
     if (httpResponse.isSuccess) {
         Response res;
         xpack::json::decode(httpResponse.success.toStdString(), res);
@@ -340,12 +371,12 @@ bool MainService::ignoreCaptcha(QString &mxid) {
 // 提交订单
 bool MainService::postOrder(QString &mxid, const QString &date) {
     OrderPost data;
-    data.birthday = storage.birthday;
-    data.tel = storage.tel;
-    data.sex = storage.sex;
-    data.cname = storage.cname;
-    data.doctype = storage.doctype;
-    data.idcard = storage.idcard;
+    data.birthday = user.birthday;
+    data.tel = user.tel;
+    data.sex = user.sex;
+    data.cname = user.cname;
+    data.doctype = user.doctype;
+    data.idcard = user.idcard;
     data.mxid = mxid;
     data.date = date;
     data.pid = QString("%1").arg(pid);
@@ -358,7 +389,7 @@ bool MainService::postOrder(QString &mxid, const QString &date) {
     emit logger(LogType::INFO, QString("【提交订单 json数据:】 %1").arg(str));
     emit logger(LogType::INFO, QString("【提交订单 密文:】 %1").arg(rel));
 
-    HttpResponse httpResponse = Http(POST_ORDER_URL).json(rel).postSync();
+    HttpResponse httpResponse = Http(POST_ORDER_URL).manager(manager).json(rel).postSync();
     if (httpResponse.isSuccess) {
         Response res;
         xpack::json::decode(httpResponse.success.toStdString(), res);

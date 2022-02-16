@@ -15,7 +15,7 @@ class HttpCache {
 public:
     std::function<void(const QString &, int)> successHandler = nullptr;
     std::function<void(const QString &, int)> failHandler = nullptr;
-    std::function<void()> completeHandler = nullptr;
+    bool internal = true;
     QString charset;
     QNetworkAccessManager *manager = nullptr;
 };
@@ -67,6 +67,8 @@ class HttpPrivate {
     QNetworkAccessManager *manager = nullptr;
     // 为true则上传json格式，否则使用form格式
     bool useJson = false;
+    // 是否使用自动创建的 manager
+    bool internal = true;
 
     // 成功的回调函数，参数为响应的字符串
     std::function<void(const QString &, int)> successHandler = nullptr;
@@ -83,13 +85,14 @@ HttpPrivate::~HttpPrivate() {
 }
 
 QNetworkAccessManager *HttpPrivate::getManager() {
-    return new QNetworkAccessManager();
+    return internal ? new QNetworkAccessManager() : manager;
 }
 
 HttpCache HttpPrivate::cache() {
     HttpCache cache;
     cache.successHandler = successHandler;
     cache.failHandler = failHandler;
+    cache.internal = internal;
     cache.charset = charset;
     cache.manager = getManager();
 
@@ -223,7 +226,7 @@ HttpResponse HttpPrivate::execSync(HttpPrivate *d, HttpMethod method) {
 
     // 3. 释放 reply 和 manager 对象
     reply->deleteLater();
-    if (cache.manager != nullptr) {
+    if (cache.internal && cache.manager != nullptr) {
         cache.manager->deleteLater();
     }
 
@@ -258,7 +261,7 @@ void HttpPrivate::handleFinish(HttpCache cache, QNetworkReply *reply, const QStr
 
     // 3. 释放 reply 和 manager 对象
     reply->deleteLater();
-    if (cache.manager != nullptr) {
+    if (cache.internal && cache.manager != nullptr) {
         cache.manager->deleteLater();
     }
 }
@@ -270,6 +273,12 @@ Http::Http(const QString &url) : d(new HttpPrivate(url)) {}
 
 Http::~Http() {
     delete d;
+}
+
+Http &Http::manager(QNetworkAccessManager *manager) {
+    d->manager = manager;
+    d->internal = (nullptr == manager);
+    return *this;
 }
 
 Http &Http::param(const QString &name, const QVariant &value) {
