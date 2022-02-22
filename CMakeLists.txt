@@ -9,8 +9,17 @@ set(CMAKE_AUTOUIC ON)
 #cmake路径
 set(CMAKE_PREFIX_PATH "D:/Qt/5.15.2/mingw81_64/lib/cmake")
 
+# 解决exe运行多出dos窗口
+set(CMAKE_CXX_FLAGS -mwindows)
+
+# 静态链接（解决编译后在无环境下运行缺少各种dll）
+set(CMAKE_EXE_LINKER_FLAGS -static)
+
+# 输出路径
+set(EXECUTABLE_OUTPUT_PATH ./build)
+
 #复制资源
-file(COPY src/area.json DESTINATION assets FOLLOW_SYMLINK_CHAIN)
+file(COPY src/area.json DESTINATION ./build/assets FOLLOW_SYMLINK_CHAIN)
 
 find_package(Qt5 COMPONENTS
         Core
@@ -22,8 +31,9 @@ find_package(Qt5 COMPONENTS
 add_executable(qt_zmyy main.cpp
         src/Config.h
         src/model/Storage.h
-        src/util/WeChatUtil.cpp
-        src/util/WeChatUtil.h
+#        dll注入工具，仅windows下可用
+#        src/util/WeChatUtil.cpp
+#        src/util/WeChatUtil.h
         src/ui/AreaBox.cpp
         src/ui/AreaBox.h
         src/model/AreaCate.h
