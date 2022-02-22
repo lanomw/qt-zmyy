@@ -119,3 +119,13 @@ WeChatWin.dll+1EA558C 头像
 WeChatWin.dll+1EA5708 微信id
 ```
 cookie可以多个程序使用，电脑配置高、带宽高的话，成功率高（限制了并发频率，不清楚是依据规则IP还是用户）
+
+## windows环境打包事项
+> 打包后需要拷贝dll至打包后的目录下
+
+```bash
+    # 位于`${path}/minGW/bin`目录下
+    libgcc_s_seh-1.dll
+    libstdc++-6.dll
+    libwinpthread-1.dll
+```
