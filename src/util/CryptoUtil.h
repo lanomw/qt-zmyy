@@ -11,7 +11,6 @@
 #include <QByteArray>
 
 #include "../lib/Hex.h"
-#include "../lib/Base64.h"
 #include "../lib/QtAES/qaesencryption.h"
 
 using namespace std;

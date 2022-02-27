@@ -22,7 +22,7 @@
 #include "../util/Http.h"
 #include "../util/CryptoUtil.h"
 #include "../lib/QtAES/qaesencryption.h"
-#include "../lib/JWT.h"
+#include "../util/JWT.h"
 
 #include "../model/Template.h"
 #include "../model/Storage.h"
@@ -47,7 +47,7 @@ private:
     void secKill();
 
     // 产品详情
-    void getProductDetail(QList<SubDate> subDateList);
+    void getProductDetail();
 
     // 验证码检查
     bool ignoreCaptcha(QString &mxid);
@@ -79,7 +79,7 @@ public slots:
     void getUser();
 
     // 定时任务
-    void enableTask(int p_id, const QDateTime &dateTime, int f_ime);
+    void enableTask(int p_id, const QDateTime &dateTime, int f_ime, const QString &subDate);
 
 signals:
 
@@ -119,6 +119,7 @@ private:
     bool isStart = false;
     bool stopSecKill = false; // 是否停止秒杀
     int timerCount = 0; // 延时次数。防止请求次数过多被限流
+    QList<SubDate> subDateList;
     QTimer *timer;
     User user;
     Storage storage;

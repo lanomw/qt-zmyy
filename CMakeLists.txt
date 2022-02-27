@@ -52,8 +52,6 @@ add_executable(zmyy main.cpp
         src/model/SubDate.h
         src/lib/QtAES/qaesencryption.cpp
         src/lib/QtAES/qaesencryption.h
-        src/lib/Base64.cpp
-        src/lib/Base64.h
         src/lib/Hex.cpp
         src/lib/Hex.h
         src/util/CryptoUtil.cpp
@@ -66,8 +64,8 @@ add_executable(zmyy main.cpp
         src/ui/MainWidget.h
         src/service/MainService.cpp
         src/service/MainService.h
-        src/lib/JWT.cpp
-        src/lib/JWT.h)
+        src/util/JWT.cpp
+        src/util/JWT.h)
 
 # 查找Qt包
 find_package(Qt5 COMPONENTS ${REQUIRED_LIBS} REQUIRED)

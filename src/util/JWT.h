@@ -8,17 +8,9 @@
 
 #include <QString>
 #include <QList>
+#include <QByteArray>
 
-#include "Base64.h"
-#include "xpack/json.h"
-
-// jwt头部
-class JWTHeader {
-    QString typ;
-    QString alg;
-
-XPACK(O(typ, alg));
-};
+#include "../lib/xpack/json.h"
 
 // jwt载荷
 class JWTPayload {
@@ -32,19 +24,14 @@ public:
 XPACK(O(iat, exp, sub, jti, val));
 };
 
-// jwt数据
-class JWTData {
-public:
-    JWTHeader header;
-    JWTPayload payload;
-    QString signature;
-
-XPACK(O(header, payload, signature));
-};
-
 class JWT {
 public:
-    static JWTData parse(const QString &jwt);
+
+    // 获取签名signature
+    static QString getSignature(const QString &cookie);
+
+    // 混入mxid
+    static QString setMxid(const QString &cookie, const QString &mxid);
 };
 
 #endif //ZMYY_JWT_H

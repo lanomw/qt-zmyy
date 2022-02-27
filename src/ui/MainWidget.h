@@ -64,7 +64,6 @@ private:
     MainService mainService;
     bool showLog = true; // 日志控件显示/隐藏
 
-    QList<SubDate> subDateList;
     QList<Hospital> hospitalList;
     QList<Product> productList;
     Product subProduct;
@@ -86,6 +85,7 @@ private:
     QLabel *Sub_Date; // 预约日期选择控件
     QLabel *Sub_Remark; // 备注显示
     QDateTimeEdit *killDate; // 秒杀时间输入控件
+    QTextEdit *subDateList; // 预约日期列表。填写后将跳过预约日期列表API
 
 
     /*----------------------- 内容部分-控件 -------------------------*/

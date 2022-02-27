@@ -234,6 +234,8 @@ QGroupBox *MainWidget::createSubLayout() {
     killDate->setDate(QDate::currentDate());
     Sub_Date = new QLabel("暂无");
     Sub_Remark = new QLabel("暂无");
+    subDateList = new QTextEdit;
+    subDateList->setPlaceholderText("多个则用英文逗号或换行进行分割(日期格式:yyyy-MM-dd。例：2022-01-27,2022-01-28)。填写后将跳过预约日期列表API");
 
     formLayout->addRow("名称:", Sub_Product);
     formLayout->addRow("价格:", Sub_Price);
@@ -241,6 +243,7 @@ QGroupBox *MainWidget::createSubLayout() {
     formLayout->addRow("备注:", Sub_Remark);
     formLayout->addRow("针次:", Sub_Num);
     formLayout->addRow("秒杀时间", killDate);
+    formLayout->addRow("预约日期", subDateList);
 
     QGridLayout *gridLayout = new QGridLayout;
     QPushButton *exitBtn = new QPushButton("退出");
@@ -262,7 +265,7 @@ QGroupBox *MainWidget::createSubLayout() {
     });
     // 启动定时器
     connect(subBtn, &QPushButton::clicked, this, [this] {
-        mainService.enableTask(subProduct.id, killDate->dateTime(), Sub_Num->currentData().value<int>());
+        mainService.enableTask(subProduct.id, killDate->dateTime(), Sub_Num->currentData().value<int>(), subDateList->toPlainText());
     });
     // 退出程序
     connect(exitBtn, &QPushButton::clicked, this, &MainWidget::close);
@@ -405,6 +408,22 @@ void MainWidget::renderProduct(const QList<Product> &list) {
         for (const auto &item: list) {
             Sub_Num->addItem(item.cname, item.value);
         }
+
+        // 自动截取秒杀时间。仅当秒杀时间未过才有效
+        bool isSet = false;
+        if (subProduct.date.length() > 11) {
+            QString dateTime = QString("%1-%2").arg(QDate::currentDate().year()).arg(subProduct.date.mid(0, 11));
+            QDateTime qDate = QDateTime::fromString(dateTime, "yyyy-MM-dd HH:mm");
+            if (qDate > QDateTime::currentDateTime()) {
+                isSet = true;
+                killDate->setDateTime(qDate);
+            }
+        }
+        // 重置未当天凌晨
+        if (!isSet) {
+            QString str = QString("%1 00:00").arg(QDate::currentDate().toString("yyyy-MM-dd"));
+            killDate->setDateTime(QDateTime::fromString(str, "yyyy-MM-dd HH:mm"));
+        }
     });
 }
 
@@ -454,4 +473,5 @@ void MainWidget::widgetDisable(bool enable) {
     cateConfirm->setDisabled(enable);
     hTableWidget->setDisabled(enable);
     pTableWidget->setDisabled(enable);
+    subDateList->setDisabled(enable);
 }

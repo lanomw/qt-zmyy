@@ -130,10 +130,9 @@ void MainService::setCookie(const QString &cookie) {
     QFile file(storage_file);
     file.open(QFile::WriteOnly);
     storage.cookie = cookie;
-    // 根据jwt获取签名key
-    JWTData jwtData = JWT::parse(cookie);
-    storage.signature = jwtData.signature;
     Http::setCookie(cookie);
+    // 根据jwt获取签名key
+    storage.signature = JWT::getSignature(cookie);
     file.write(xpack::json::encode(storage).c_str());
     file.close();
 
@@ -184,7 +183,7 @@ void MainService::getUser() {
 }
 
 // 定时任务
-void MainService::enableTask(int p_id, const QDateTime &dateTime, int f_ime) {
+void MainService::enableTask(int p_id, const QDateTime &dateTime, int f_ime, const QString &subDate) {
     pid = p_id;
     fTime = f_ime;
     if (!isStart && pid == 0) {
@@ -192,7 +191,6 @@ void MainService::enableTask(int p_id, const QDateTime &dateTime, int f_ime) {
         return;
     }
 
-    // 测试期间代码
     int time = 0;
     if (!isStart) {
         time = QDateTime::currentDateTime().msecsTo(dateTime);
@@ -209,14 +207,28 @@ void MainService::enableTask(int p_id, const QDateTime &dateTime, int f_ime) {
     emit widgetDisable(isStart);
 
     if (isStart) {
+        // 手动录入的预约日期
+        subDateList.clear();
+        QList<QString> arr = subDate.split(QRegExp("[,|\n|\r\n]"));
+        if (arr.length()) {
+            for (const auto &item : arr) {
+                if (!item.trimmed().isEmpty()) {
+                    SubDate date;
+                    date.date = item.trimmed();
+                    date.enable = true;
+                    subDateList.append(date);
+                }
+            }
+        }
+
         emit logger(LogType::INFO, QString("%1秒后开始秒杀").arg(time / 1000));
         timerCount = 0;
         timer = new QTimer();
         timer->setTimerType(Qt::TimerType::PreciseTimer);
         timer->setSingleShot(true);
         connect(timer, &QTimer::timeout, this, &MainService::secKill);
-        // 获取新的时间。多延迟300毫秒
-        timer->start(QDateTime::currentDateTime().msecsTo(dateTime) + 200);
+        // 获取新的时间。多延迟一点时间，保证数据能够正常获取到
+        timer->start(QDateTime::currentDateTime().msecsTo(dateTime) + 30);
     } else {
         emit logger(LogType::INFO, "秒杀已关闭");
         disconnect(timer, &QTimer::timeout, this, nullptr);
@@ -237,6 +249,11 @@ void MainService::secKill() {
     params["pid"] = pid;
     params["month"] = QDate::currentDate().toString("yyyyMM");
 
+    if (!subDateList.isEmpty()) {
+        getProductDetail();
+        return;
+    }
+
     // 获取可预约日期列表
     Http(BASE_URL)
             .manager(manager)
@@ -247,9 +264,18 @@ void MainService::secKill() {
                         ResponseData<SubDate> res;
                         xpack::json::decode(response.toStdString(), res);
                         if (!res.list.empty()) {
-                            getProductDetail(res.list);
+                            subDateList = res.list;
+                            getProductDetail();
                         } else {
-                            emit logger(LogType::ERR, "【时间列表为空】");
+                            if (!stopSecKill && timerCount < 50) { // 根据下面延时时间进行相应调整
+                                emit logger(LogType::ERR, "【时间列表为空，延迟300ms】");
+                                // 重新设置定时器
+                                timer = new QTimer();
+                                timer->setTimerType(Qt::TimerType::PreciseTimer);
+                                timer->setSingleShot(true);
+                                connect(timer, &QTimer::timeout, this, &MainService::secKill);
+                                timer->start(300);
+                            }
                         }
                     } else {
                         if (!stopSecKill && timerCount < 50) { // 根据下面延时时间进行相应调整
@@ -273,7 +299,7 @@ void MainService::secKill() {
 }
 
 // 产品详情
-void MainService::getProductDetail(QList<SubDate> subDateList) {
+void MainService::getProductDetail() {
     if (storage.signature.isEmpty()) {
         QMessageBox::warning(nullptr, "警告", "缺少 signature");
         return;
@@ -297,7 +323,6 @@ void MainService::getProductDetail(QList<SubDate> subDateList) {
             emit logger(LogType::INFO, QString("【%1 暂未开启：】 %2").arg(i + 1).arg(subDate.date));
             continue;
         }
-        emit logger(LogType::INFO, QString("【%1 可预约：】 %2").arg(i + 1).arg(subDate.date));
 
         params["scdate"] = subDate.date;
         HttpResponse httpResponse = Http(BASE_URL).manager(manager).params(params).getSync();
@@ -318,8 +343,8 @@ void MainService::getProductDetail(QList<SubDate> subDateList) {
                 xpack::json::decode(rel.toStdString(), res);
 
                 if (res.list.empty()) {
-                    emit logger(LogType::INFO, QString("【产品详情】 %1 预约已满").arg(subDate.date));
-                    subDateList[i].enable = false;
+                    emit logger(LogType::INFO, QString("【产品详情】 %1 无效日期").arg(subDate.date));
+//                    subDateList[i].enable = false;
                     continue;
                 }
 
@@ -335,10 +360,17 @@ void MainService::getProductDetail(QList<SubDate> subDateList) {
             }
         } else {
             emit logger(LogType::ERR, QString("【预约时间详情】 %1  %2").arg(httpResponse.status).arg(httpResponse.fail));
+            isStart = false;
+            emit widgetDisable(false);
+            return;
         }
 
         // 防止界面卡住
         QApplication::processEvents();
+    }
+
+    if (timerCount < 50) { // 根据下面延时时间进行相应调整
+        getProductDetail();
     }
 }
 
@@ -399,6 +431,10 @@ bool MainService::postOrder(QString &mxid, const QString &date) {
         } else if (res.status == 203 || res.status == 201) {
             // 参数校验失败
             emit logger(LogType::INFO, QString("【提交订单 失败】 %1").arg(res.msg));
+            return true;
+        }  else if (res.status == 408) {
+            // 未登录
+            emit logger(LogType::ERR, QString("【提交订单 cookie失效】 %1").arg(res.msg));
             return true;
         } else {
             emit logger(LogType::INFO, QString("【提交订单 失败】 %1").arg(res.msg));
