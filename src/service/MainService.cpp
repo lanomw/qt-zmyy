@@ -187,7 +187,7 @@ void MainService::enableTask(int p_id, const QDateTime &dateTime, int f_ime, con
     pid = p_id;
     fTime = f_ime;
     if (!isStart && pid == 0) {
-        QMessageBox::warning(nullptr, "警告", "未选择产品");
+        emit logger(LogType::WARN, "未选择产品");
         return;
     }
 
@@ -195,8 +195,7 @@ void MainService::enableTask(int p_id, const QDateTime &dateTime, int f_ime, con
     if (!isStart) {
         time = QDateTime::currentDateTime().msecsTo(dateTime);
         if (time <= 0) {
-            QMessageBox::warning(nullptr, "警告", "无效时间");
-            emit logger(LogType::INFO, "无效时间");
+            emit logger(LogType::WARN, "无效时间");
             return;
         }
     }
@@ -211,7 +210,7 @@ void MainService::enableTask(int p_id, const QDateTime &dateTime, int f_ime, con
         subDateList.clear();
         QList<QString> arr = subDate.split(QRegExp("[,|\n|\r\n]"));
         if (arr.length()) {
-            for (const auto &item : arr) {
+            for (const auto &item: arr) {
                 if (!item.trimmed().isEmpty()) {
                     SubDate date;
                     date.date = item.trimmed();
@@ -222,18 +221,28 @@ void MainService::enableTask(int p_id, const QDateTime &dateTime, int f_ime, con
         }
 
         emit logger(LogType::INFO, QString("%1秒后开始秒杀").arg(time / 1000));
-        timerCount = 0;
-        timer = new QTimer();
-        timer->setTimerType(Qt::TimerType::PreciseTimer);
-        timer->setSingleShot(true);
-        connect(timer, &QTimer::timeout, this, &MainService::secKill);
         // 获取新的时间。多延迟一点时间，保证数据能够正常获取到
-        timer->start(QDateTime::currentDateTime().msecsTo(dateTime) + 30);
+        resetTimeout(QDateTime::currentDateTime().msecsTo(dateTime) + 5);
     } else {
         emit logger(LogType::INFO, "秒杀已关闭");
         disconnect(timer, &QTimer::timeout, this, nullptr);
         timer->stop();
     }
+}
+
+// 重置定时器
+void MainService::resetTimeout(int delay = 100) {
+    if (timer && timer->isActive()) {
+        disconnect(timer, &QTimer::timeout, nullptr, nullptr);
+        timer->stop();
+    }
+
+    timerCount = 0;
+    timer = new QTimer();
+    timer->setTimerType(Qt::TimerType::PreciseTimer);
+    timer->setSingleShot(true);
+    connect(timer, &QTimer::timeout, this, &MainService::secKill);
+    timer->start(delay);
 }
 
 // 秒杀。使用同一个QNetworkAccessManager，避免额外资源开销
@@ -262,30 +271,27 @@ void MainService::secKill() {
                 try {
                     if (response.contains("list")) {
                         ResponseData<SubDate> res;
+                        emit logger(LogType::INFO, QString("【可预约日期列表】 %1").arg(response));
                         xpack::json::decode(response.toStdString(), res);
                         if (!res.list.empty()) {
                             subDateList = res.list;
                             getProductDetail();
                         } else {
+                            // 处理主线程任务
+                            QApplication::processEvents();
                             if (!stopSecKill && timerCount < 50) { // 根据下面延时时间进行相应调整
-                                emit logger(LogType::ERR, "【时间列表为空，延迟300ms】");
+                                emit logger(LogType::ERR, "【时间列表为空，延迟100ms】");
                                 // 重新设置定时器
-                                timer = new QTimer();
-                                timer->setTimerType(Qt::TimerType::PreciseTimer);
-                                timer->setSingleShot(true);
-                                connect(timer, &QTimer::timeout, this, &MainService::secKill);
-                                timer->start(300);
+                                resetTimeout(100);
                             }
                         }
                     } else {
+                        // 处理主线程任务
+                        QApplication::processEvents();
                         if (!stopSecKill && timerCount < 50) { // 根据下面延时时间进行相应调整
-                            emit logger(LogType::ERR, "【时间列表不存在，延迟300ms】");
+                            emit logger(LogType::ERR, "【时间列表不存在，延迟100ms】");
                             // 重新设置定时器
-                            timer = new QTimer();
-                            timer->setTimerType(Qt::TimerType::PreciseTimer);
-                            timer->setSingleShot(true);
-                            connect(timer, &QTimer::timeout, this, &MainService::secKill);
-                            timer->start(300);
+                            resetTimeout(100);
                         }
                     }
                 } catch (const exception &e) {
@@ -301,11 +307,11 @@ void MainService::secKill() {
 // 产品详情
 void MainService::getProductDetail() {
     if (storage.signature.isEmpty()) {
-        QMessageBox::warning(nullptr, "警告", "缺少 signature");
+        emit logger(LogType::WARN, "缺少 signature");
         return;
     }
     if (storage.cookie.isEmpty()) {
-        QMessageBox::warning(nullptr, "警告", "缺少 cookie");
+        emit logger(LogType::WARN, "缺少 cookie");
         return;
     }
 
@@ -315,6 +321,9 @@ void MainService::getProductDetail() {
     params["pid"] = pid;
 
     for (int i = 0; i < subDateList.length(); ++i) {
+        // 处理主线程任务
+        QApplication::processEvents();
+
         if (stopSecKill) {
             return;
         }
@@ -326,6 +335,8 @@ void MainService::getProductDetail() {
 
         params["scdate"] = subDate.date;
         HttpResponse httpResponse = Http(BASE_URL).manager(manager).params(params).getSync();
+        emit logger(LogType::INFO,
+                    QString("【产品详情-响应数据】 %1").arg(QString::fromStdString(xpack::json::encode(httpResponse))));
         if (httpResponse.isSuccess) {
             try {
                 // 302则表示当天的疫苗已经没了
@@ -334,17 +345,20 @@ void MainService::getProductDetail() {
                     subDateList[i].enable = false;
                     continue;
                 }
-
                 // 数据解密
-                QString rel = CryptoUtil::decrypt(httpResponse.success, storage.signature);
-                emit logger(LogType::INFO, QString("【产品详情】 %1").arg(rel));
+                QString rel = "";
+                if (httpResponse.success.contains("{")) {
+                    rel = httpResponse.success;
+                } else {
+                    rel = CryptoUtil::decrypt(httpResponse.success, storage.signature);
+                    emit logger(LogType::INFO, QString("【产品详情-解密数据】 %1").arg(rel));
+                }
 
                 ResponseData<DateDetail> res;
                 xpack::json::decode(rel.toStdString(), res);
 
                 if (res.list.empty()) {
                     emit logger(LogType::INFO, QString("【产品详情】 %1 无效日期").arg(subDate.date));
-//                    subDateList[i].enable = false;
                     continue;
                 }
 
@@ -364,9 +378,6 @@ void MainService::getProductDetail() {
             emit widgetDisable(false);
             return;
         }
-
-        // 防止界面卡住
-        QApplication::processEvents();
     }
 
     if (timerCount < 50) { // 根据下面延时时间进行相应调整
@@ -380,7 +391,11 @@ bool MainService::ignoreCaptcha(QString &mxid) {
     params["act"] = "GetCaptcha";
     params["mxid"] = mxid;
 
+    // 处理主线程任务
+    QApplication::processEvents();
     HttpResponse httpResponse = Http(BASE_URL).manager(manager).params(params).getSync();
+    emit logger(LogType::INFO,
+                QString("【验证码检查-响应数据】 %1").arg(QString::fromStdString(xpack::json::encode(httpResponse))));
     if (httpResponse.isSuccess) {
         Response res;
         xpack::json::decode(httpResponse.success.toStdString(), res);
@@ -421,26 +436,30 @@ bool MainService::postOrder(QString &mxid, const QString &date) {
     emit logger(LogType::INFO, QString("【提交订单 json数据:】 %1").arg(str));
     emit logger(LogType::INFO, QString("【提交订单 密文:】 %1").arg(rel));
 
+    // 处理主线程任务
+    QApplication::processEvents();
     HttpResponse httpResponse = Http(POST_ORDER_URL).manager(manager).json(rel).postSync();
+    emit logger(LogType::INFO,
+                QString("【提交预约-响应数据】 %1").arg(QString::fromStdString(xpack::json::encode(httpResponse))));
     if (httpResponse.isSuccess) {
         Response res;
         xpack::json::decode(httpResponse.success.toStdString(), res);
         if (res.status == 200) {
-            emit logger(LogType::INFO, QString("【提交订单 成功】 %1").arg(res.msg));
+            emit logger(LogType::INFO, QString("【提交预约 成功】 %1").arg(res.msg));
             return true;
         } else if (res.status == 203 || res.status == 201) {
             // 参数校验失败
-            emit logger(LogType::INFO, QString("【提交订单 失败】 %1").arg(res.msg));
+            emit logger(LogType::INFO, QString("【提交预约 失败】 %1").arg(res.msg));
             return true;
-        }  else if (res.status == 408) {
+        } else if (res.status == 408) {
             // 未登录
-            emit logger(LogType::ERR, QString("【提交订单 cookie失效】 %1").arg(res.msg));
+            emit logger(LogType::ERR, QString("【提交预约 cookie失效】 %1").arg(res.msg));
             return true;
         } else {
-            emit logger(LogType::INFO, QString("【提交订单 失败】 %1").arg(res.msg));
+            emit logger(LogType::INFO, QString("【提交预约 失败】 %1").arg(res.msg));
         }
     } else {
-        emit logger(LogType::ERR, QString("【提交订单】 %1  %2").arg(httpResponse.status).arg(httpResponse.fail));
+        emit logger(LogType::ERR, QString("【提交预约】 %1  %2").arg(httpResponse.status).arg(httpResponse.fail));
         stopSecKill = false;
         emit widgetDisable(false);
     }

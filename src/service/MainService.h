@@ -6,7 +6,6 @@
 #define ZMYY_MAINSERVICE_H
 
 #include <QApplication>
-#include <QMessageBox>
 
 #include <QObject>
 #include <QDate>
@@ -42,6 +41,9 @@ public:
     ~MainService();
 
 private:
+
+    // 重置定时器
+    void resetTimeout(int delay);
 
     // 秒杀
     void secKill();
@@ -111,7 +113,6 @@ signals:
     // 渲染用户信息
     void renderUser(const QString &name, int sex, const QString &idcard, const QString &tel);
 
-
 private:
     int id = 0; // 医院id
     int pid = 0; // 产品id
@@ -120,7 +121,7 @@ private:
     bool stopSecKill = false; // 是否停止秒杀
     int timerCount = 0; // 延时次数。防止请求次数过多被限流
     QList<SubDate> subDateList;
-    QTimer *timer;
+    QTimer *timer = nullptr;
     User user;
     Storage storage;
     QNetworkAccessManager *manager = nullptr;

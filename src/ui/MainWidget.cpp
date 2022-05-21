@@ -27,24 +27,61 @@ MainWidget::MainWidget() {
     container->addLayout(leftLayout, 1);
     container->addLayout(rightLayout);
 
+    // 逻辑部分移入新线程执行
+    qThread = new QThread(this);
+    mainService = new MainService;
+    mainService->moveToThread(qThread);
+    qThread->start();
+
+    // 注册传输数据类型
+    qRegisterMetaType<QList<Hospital>>("QList<Hospital>");
+    qRegisterMetaType<QList<Hospital>>("QList<Hospital>&");
+    qRegisterMetaType<QList<Product>>("QList<Product>");
+    qRegisterMetaType<QList<Product>>("QList<Product>&");
+    qRegisterMetaType<QList<Cate>>("QList<Cate>");
+    qRegisterMetaType<QList<Cate>>("QList<Cate>&");
+    qRegisterMetaType<LogType>("LogType");
+
+    // 通信关联
+    connect(this, &MainWidget::fetchCate, mainService, &MainService::fetchCate); // 获取分类
+    connect(this, &MainWidget::fetchHospital, mainService, &MainService::fetchHospital); // 获取医院列表
+    connect(this, &MainWidget::fetchProduct, mainService, &MainService::fetchProduct); // 获取产品列表
+    connect(this, &MainWidget::getStorage, mainService, &MainService::getStorage); // 获取Storage数据
+    connect(this, &MainWidget::setCookie, mainService, &MainService::setCookie); // 设置cookie
+    connect(this, &MainWidget::saveStorageByCity, mainService, &MainService::saveStorageByCity); // 保存Storage数据
+    connect(this, &MainWidget::getUser, mainService, &MainService::getUser); // 获取用户信息
+    connect(this, &MainWidget::enableTask, mainService, &MainService::enableTask); // 定时任务
+
     // ui关联service
-    connect(&mainService, &MainService::logger, this, &MainWidget::logger);
-    connect(&mainService, &MainService::widgetDisable, this, &MainWidget::widgetDisable);
-    connect(&mainService, &MainService::renderCate, this, &MainWidget::renderCate);
-    connect(&mainService, &MainService::renderHospital, this, &MainWidget::renderHospital);
-    connect(&mainService, &MainService::renderProduct, this, &MainWidget::renderProduct);
-    connect(&mainService, &MainService::renderStorage, this, &MainWidget::renderStorage);
-    connect(&mainService, &MainService::renderUser, this, &MainWidget::renderUser);
+    connect(mainService, &MainService::logger, this, &MainWidget::logger); // 日志输出
+    connect(mainService, &MainService::widgetDisable, this, &MainWidget::widgetDisable); // 控件启用/禁用
+    connect(mainService, &MainService::renderCate, this, &MainWidget::renderCate); // 渲染分类
+    connect(mainService, &MainService::renderHospital, this, &MainWidget::renderHospital); // 渲染医院
+    connect(mainService, &MainService::renderProduct, this, &MainWidget::renderProduct); // 渲染产品
+    connect(mainService, &MainService::renderStorage, this, &MainWidget::renderStorage); // 渲染本地存储
+    connect(mainService, &MainService::renderUser, this, &MainWidget::renderUser); // 渲染用户信息
+    //关闭窗口的时候回收线程资源
+    connect(this, &QWidget::destroyed, this, [=](){
+        if (qThread->isRunning()) {
+            qThread->quit();
+            qThread->wait();
+        }
+    });
 
     logger(LogType::INFO, "========== 主界面构建完成 ==========");
 
     // 数据请求
-    mainService.fetchCate(0);
-    mainService.getStorage();
+    emit fetchCate(0);
+    emit getStorage();
 }
 
 MainWidget::~MainWidget() {
     areaBox = nullptr;
+    if (qThread->isRunning()) {
+        qThread->quit();
+        qThread->wait();
+    }
+    delete mainService;
 }
 
 /*----------------------- 界面主要模块 -------------------------*/
@@ -67,7 +104,7 @@ QHBoxLayout *MainWidget::createAreaLayout() {
             // 信号监听
             connect(areaBox, &AreaBox::confirm, this, [this](double lat, double lng, const QString &cityName) {
                 chooseArea->setText(cityName.isEmpty() ? "未选择地区" : cityName);
-                mainService.saveStorageByCity(lat, lng, cityName);
+                emit saveStorageByCity(lat, lng, cityName);
             });
         }
         areaBox->show();
@@ -83,6 +120,7 @@ QHBoxLayout *MainWidget::createCateLayout() {
     oneCate->setMinimumWidth(200);
     twoCate = new QComboBox;
     twoCate->setMinimumWidth(200);
+    oneCate->addItem("暂无数据", 0);
     twoCate->addItem("暂无数据", 0);
     cateConfirm = new QPushButton("查询医院");
 
@@ -97,12 +135,17 @@ QHBoxLayout *MainWidget::createCateLayout() {
     connect(oneCate, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this] {
         int id = oneCate->currentData().value<int>();
         if (id) {
-            mainService.fetchCate(id);
+            twoCate->clear();
+            twoCate->addItem("暂无数据", 0);
+            emit fetchCate(id);
         }
     });
     // 分类下的医院
     connect(cateConfirm, &QPushButton::clicked, this, [this]() {
-        mainService.fetchHospital(twoCate->currentData().value<int>());
+        hTableWidget->clearContents();
+        hTableWidget->setRowCount(1);
+        hTableWidget->setItem(0, 3, new QTableWidgetItem("加载中..."));
+        emit fetchHospital(twoCate->currentData().value<int>());
     });
 
     return cateLayout;
@@ -182,7 +225,7 @@ QGroupBox *MainWidget::createInfoLayout() {
 
     // 刷新用户信息
     connect(getUserBtn, &QPushButton::clicked, this, [this] {
-        mainService.getUser();
+        emit getUser();
     });
 
     return box;
@@ -212,7 +255,7 @@ QGroupBox *MainWidget::createCookieLayout() {
 
     // 保存信息
     connect(saveBtn, &QPushButton::clicked, this, [this] {
-        mainService.setCookie(Cookie->text());
+        emit setCookie(Cookie->text());
     });
 
     return box;
@@ -265,7 +308,7 @@ QGroupBox *MainWidget::createSubLayout() {
     });
     // 启动定时器
     connect(subBtn, &QPushButton::clicked, this, [this] {
-        mainService.enableTask(subProduct.id, killDate->dateTime(), Sub_Num->currentData().value<int>(), subDateList->toPlainText());
+        emit enableTask(subProduct.id, killDate->dateTime(), Sub_Num->currentData().value<int>(), subDateList->toPlainText());
     });
     // 退出程序
     connect(exitBtn, &QPushButton::clicked, this, &MainWidget::close);
@@ -349,7 +392,7 @@ void MainWidget::renderHospital(const QList<Hospital> &list) {
         pTableWidget->setRowCount(1);
         pTableWidget->setItem(0, 4, new QTableWidgetItem("加载中..."));
 
-        mainService.fetchProduct(item.id, item.lat, item.lng);
+        emit fetchProduct(item.id, item.lat, item.lng);
     });
 
 }
@@ -466,9 +509,10 @@ void MainWidget::renderUser(const QString &name, int sex, const QString &idcard,
 // 启用/禁用控件
 void MainWidget::widgetDisable(bool enable) {
     subBtn->setText(enable ? "停止" : "开始");
+    oneCate->setDisabled(enable);
+    twoCate->setDisabled(enable);
     Sub_Num->setDisabled(enable);
     killDate->setDisabled(enable);
-    saveBtn->setDisabled(enable);
     chooseArea->setDisabled(enable);
     cateConfirm->setDisabled(enable);
     hTableWidget->setDisabled(enable);
